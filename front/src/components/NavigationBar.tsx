@@ -1,6 +1,8 @@
-import { COLORS } from "@/lib/constants";
+"use client";
+
 import { Jersey_25 } from "next/font/google";
 import Image from "next/image";
+import Link from "next/link";
 
 const jersey = Jersey_25({
   weight: ["400"],
@@ -8,58 +10,42 @@ const jersey = Jersey_25({
 });
 
 export default function NavigationBar() {
+  const buttonClasses =
+    "mt-auto mb-auto ml-2 mr-2 w-32 h-8 border flex justify-center items-center rounded-sm transition-all duration-200 bg-taskbar_button border-taskbar_border hover:bg-taskbar_button_hover";
+
   return (
-    <>
-      <div
-        className={`w-full h-10 bg-white flex ${jersey.className}`}
-        style={{ backgroundColor: COLORS.taskbar_main }}
-      >
-        <button
-          className="mt-auto mb-auto ml-6 mr-2 w-32 h-8 border flex justify-center items-center rounded-sm transition-all duration-200 hover:scale-105"
-          style={{
-            backgroundColor: COLORS.taskbar_button,
-            borderColor: COLORS.taskbar_border,
-          }}
-        >
-          <span className="align-middle font-black text-navbar">Accueil</span>
+    <div className="sticky top-0">
+      <div className={`w-full h-10 flex ${jersey.className} bg-taskbar_main`}>
+        <button className={buttonClasses + " ml-6"}>
+          <Link href="/home">
+            <span className="align-middle font-black text-navbar">Accueil</span>
+          </Link>
         </button>
 
-        <button
-          className="mt-auto mb-auto ml-2 mr-2 w-32 h-8 border flex justify-center items-center rounded-sm transition-all duration-200 hover:scale-105"
-          style={{
-            backgroundColor: COLORS.taskbar_button,
-            borderColor: COLORS.taskbar_border,
-          }}
-        >
-          <span className="align-middle font-black text-navbar">
-            Evenements
-          </span>
+        <button className={buttonClasses}>
+          <Link href="/events">
+            <span className="align-middle font-black text-navbar transform-none">
+              Evenements
+            </span>
+          </Link>
         </button>
 
-        <button
-          className="mt-auto mb-auto ml-2 mr-2 w-32 h-8 border flex justify-center items-center rounded-sm transition-all duration-200 hover:scale-105"
-          style={{
-            backgroundColor: COLORS.taskbar_button,
-            borderColor: COLORS.taskbar_border,
-          }}
-        >
-          <span className="align-middle font-black text-navbar">Projets</span>
+        <button className={buttonClasses}>
+          <Link href="/projects">
+            <span className="align-middle font-black text-navbar">Projets</span>
+          </Link>
         </button>
 
-        <button
-          className="mt-auto mb-auto ml-2 mr-2 w-32 h-8 border flex justify-center items-center rounded-sm transition-all duration-200 hover:scale-105"
-          style={{
-            backgroundColor: COLORS.taskbar_button,
-            borderColor: COLORS.taskbar_border,
-          }}
-        >
-          <span className="align-middle font-black text-navbar">
-            Suggestions
-          </span>
+        <button className={buttonClasses}>
+          <Link href="/suggestions">
+            <span className="align-middle font-black text-navbar">
+              Suggestions
+            </span>
+          </Link>
         </button>
 
         <div className="flex ml-auto">
-          <button className="rounded-full pl-1 pr-1 mt-1 mb-1 hover:bg-slate-500 duration-200">
+          <button className="rounded-full pl-1 pr-1 mt-1 mb-1 hover:bg-taskbar_button_hover duration-200">
             <Image
               src="/moon.png"
               alt="light/dark mode"
@@ -68,13 +54,7 @@ export default function NavigationBar() {
             />
           </button>
 
-          <button
-            className="mt-auto mb-auto ml-4 mr-6 w-56 h-8 border flex justify-center items-center rounded-sm transition-all duration-200 hover:scale-105"
-            style={{
-              backgroundColor: COLORS.taskbar_button,
-              borderColor: COLORS.taskbar_border,
-            }}
-          >
+          <button className={buttonClasses + " ml-4 mr-6 w-56"}>
             <span className="align-middle font-black text-navbar">
               mael.reynaud
             </span>
@@ -82,6 +62,6 @@ export default function NavigationBar() {
         </div>
       </div>
       <div className="w-full h-0.5 bg-black" />
-    </>
+    </div>
   );
 }

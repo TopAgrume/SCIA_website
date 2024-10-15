@@ -6,15 +6,18 @@ module.exports = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    fontSize: {
-      sm: "0.8rem",
-      base: "1rem",
-      xl: "1.25rem",
-      "2xl": "1.563rem",
-      "3xl": "1.953rem",
-      "4xl": "2.441rem",
-      "5xl": "3.052rem",
-      navbar: 22,
+    extend: {
+      colors: {
+        primary: "#ded4ec", // for background
+        secondary: "#d1c9dd", // for cards
+        taskbar_main: "#bab7b7",
+        taskbar_button: "#bab7cb",
+        taskbar_button_hover: "#a19eaf",
+        taskbar_border: "#a9a9a9",
+      },
+      fontSize: {
+        navbar: 22,
+      },
     },
   },
   plugins: [],
