@@ -11,7 +11,7 @@ const jersey = Jersey_25({
 
 export default function NavigationBar() {
   const buttonClasses =
-    "mt-auto mb-auto ml-2 mr-2 w-32 h-8 border flex justify-center items-center rounded-sm transition-all duration-200 bg-taskbar_button border-taskbar_border hover:bg-taskbar_button_hover";
+    "mt-auto mb-auto ml-2 mr-2 w-32 h-8 border flex justify-center items-center rounded-sm transition-all duration-300 bg-taskbar_button border-taskbar_border hover:bg-taskbar_button_hover";
 
   return (
     <div className="sticky top-0">
@@ -45,7 +45,7 @@ export default function NavigationBar() {
         </button>
 
         <div className="flex ml-auto">
-          <button className="rounded-full pl-1 pr-1 mt-1 mb-1 hover:bg-taskbar_button_hover duration-200">
+          <button className="rounded-full pl-1 pr-1 mt-1 mb-1 hover:bg-taskbar_button_hover duration-500">
             <Image
               src="/moon.png"
               alt="light/dark mode"
