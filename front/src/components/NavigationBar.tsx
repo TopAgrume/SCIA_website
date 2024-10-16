@@ -22,18 +22,18 @@ export default function NavigationBar() {
         <div className="flex m-1 ml-4">
           <Image src="/logo.png" alt="logo" width={34} height={40} />
         </div>
-        <button
+        <Link
+          href="/home"
           className={
             buttonClasses +
             ` ml-4 ${pathname === "/home" ? "border-black" : "border-taskbar_border"}`
           }
         >
-          <Link href="/home">
-            <span className="align-middle font-black text-navbar">Accueil</span>
-          </Link>
-        </button>
+          <span className="align-middle font-black text-navbar">Accueil</span>
+        </Link>
 
-        <button
+        <Link
+          href="/events"
           className={
             buttonClasses +
             (pathname === "/events"
@@ -41,14 +41,13 @@ export default function NavigationBar() {
               : "  border-taskbar_border")
           }
         >
-          <Link href="/events">
-            <span className="align-middle font-black text-navbar transform-none">
-              Evenements
-            </span>
-          </Link>
-        </button>
+          <span className="align-middle font-black text-navbar transform-none">
+            Evenements
+          </span>
+        </Link>
 
-        <button
+        <Link
+          href="/projects"
           className={
             buttonClasses +
             (pathname === "/projects"
@@ -56,12 +55,11 @@ export default function NavigationBar() {
               : " border-taskbar_border")
           }
         >
-          <Link href="/projects">
-            <span className="align-middle font-black text-navbar">Projets</span>
-          </Link>
-        </button>
+          <span className="align-middle font-black text-navbar">Projets</span>
+        </Link>
 
-        <button
+        <Link
+          href="/suggestions"
           className={
             buttonClasses +
             (pathname === "/suggestions"
@@ -69,12 +67,10 @@ export default function NavigationBar() {
               : " border-taskbar_border")
           }
         >
-          <Link href="/suggestions">
-            <span className="align-middle font-black text-navbar">
-              Suggestions
-            </span>
-          </Link>
-        </button>
+          <span className="align-middle font-black text-navbar">
+            Suggestions
+          </span>
+        </Link>
 
         <div className="flex ml-auto">
           <button className="rounded-full pl-1 pr-1 mt-1 mb-1 hover:bg-taskbar_button_hover duration-500">

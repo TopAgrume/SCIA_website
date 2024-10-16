@@ -8,17 +8,10 @@ import { useState, useEffect, useRef } from "react";
 type EventCardProps = {
   event: Event;
   i: number;
-  setCardHeight: (height: number) => void;
 };
 
-function EventCard({ event, i, setCardHeight }: EventCardProps) {
+function EventCard({ event, i }: EventCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (cardRef.current) {
-      setCardHeight(cardRef.current.offsetHeight);
-    }
-  }, [setCardHeight]);
 
   const [onParticipantsList, setOnParticipantsList] = useState<boolean>(false);
 
@@ -97,15 +90,10 @@ function Loading() {
 
 export default function Events() {
   const [loading, setLoading] = useState<boolean>(true);
-  const [cardHeights, setCardHeights] = useState<{ [key: number]: number }>({});
 
   useEffect(() => {
     setLoading(false);
   }, []);
-
-  const setCardHeight = (index: number, height: number) => {
-    setCardHeights((prev) => ({ ...prev, [index]: height }));
-  };
 
   const events: Array<Event> = [];
   for (let i of [1, 2, 3, 4, 5]) {
@@ -128,22 +116,12 @@ export default function Events() {
         <Loading />
       ) : (
         events.map((event, i) => {
-          const cardHeight = cardHeights[i] || "auto";
-
           return (
             <div key={i} className="flex w-full mb-5">
               {i % 2 === 0 ? (
                 <>
-                  <EventCard
-                    key={i}
-                    event={event}
-                    i={i}
-                    setCardHeight={(height) => setCardHeight(i, height)}
-                  />
-                  <div
-                    className={`ml-5 relative w-4/12 mt-5`}
-                    style={{ height: cardHeight }}
-                  >
+                  <EventCard key={i} event={event} i={i} />
+                  <div className={`ml-5 relative w-4/12 mt-5`}>
                     <Image
                       src={`/cats/${i}.jpg`}
                       alt="goofy cat"
@@ -154,10 +132,7 @@ export default function Events() {
                 </>
               ) : (
                 <>
-                  <div
-                    className={`mr-5 relative w-4/12 mt-5`}
-                    style={{ height: cardHeight }}
-                  >
+                  <div className={`mr-5 relative w-4/12 mt-5`}>
                     <Image
                       src={`/cats/${i}.jpg`}
                       alt="goofy cat"
@@ -165,12 +140,7 @@ export default function Events() {
                       objectFit="fill"
                     />
                   </div>
-                  <EventCard
-                    key={i}
-                    event={event}
-                    i={i}
-                    setCardHeight={(height) => setCardHeight(i, height)}
-                  />
+                  <EventCard key={i} event={event} i={i} />
                 </>
               )}
             </div>
