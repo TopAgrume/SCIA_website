@@ -5,6 +5,7 @@ module.exports = {
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+  safelist: ["w-6/12", "w-7/12", "w-8/12", "w-9/12", "w-10/12", "w-11/12"],
   theme: {
     extend: {
       colors: {

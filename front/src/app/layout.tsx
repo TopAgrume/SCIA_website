@@ -15,6 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${jetbrains_mono.className} antialiased bg-primary`}>
+        <script>0</script>
         <NavigationBar />
         {children}
       </body>

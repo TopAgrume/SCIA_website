@@ -3,6 +3,7 @@
 import { Jersey_25 } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const jersey = Jersey_25({
   weight: ["400"],
@@ -10,19 +11,36 @@ const jersey = Jersey_25({
 });
 
 export default function NavigationBar() {
+  const pathname = usePathname();
+
   const buttonClasses =
-    "mt-auto mb-auto ml-2 mr-2 w-32 h-8 border flex justify-center items-center rounded-sm transition-all duration-300 bg-taskbar_button border-taskbar_border hover:bg-taskbar_button_hover";
+    "mt-auto mb-auto ml-2 mr-2 w-32 h-8 border flex justify-center items-center rounded-sm transition-all duration-300 bg-taskbar_button hover:bg-taskbar_button_hover";
 
   return (
-    <div className="sticky top-0">
+    <div className="sticky top-0 z-50">
       <div className={`w-full h-10 flex ${jersey.className} bg-taskbar_main`}>
-        <button className={buttonClasses + " ml-6"}>
+        <div className="flex m-1 ml-4">
+          <Image src="/logo.png" alt="logo" width={34} height={40} />
+        </div>
+        <button
+          className={
+            buttonClasses +
+            ` ml-4 ${pathname === "/home" ? "border-black" : "border-taskbar_border"}`
+          }
+        >
           <Link href="/home">
             <span className="align-middle font-black text-navbar">Accueil</span>
           </Link>
         </button>
 
-        <button className={buttonClasses}>
+        <button
+          className={
+            buttonClasses +
+            (pathname === "/events"
+              ? " border-black"
+              : "  border-taskbar_border")
+          }
+        >
           <Link href="/events">
             <span className="align-middle font-black text-navbar transform-none">
               Evenements
@@ -30,13 +48,27 @@ export default function NavigationBar() {
           </Link>
         </button>
 
-        <button className={buttonClasses}>
+        <button
+          className={
+            buttonClasses +
+            (pathname === "/projects"
+              ? " border-black"
+              : " border-taskbar_border")
+          }
+        >
           <Link href="/projects">
             <span className="align-middle font-black text-navbar">Projets</span>
           </Link>
         </button>
 
-        <button className={buttonClasses}>
+        <button
+          className={
+            buttonClasses +
+            (pathname === "/suggestions"
+              ? " border-black"
+              : " border-taskbar_border")
+          }
+        >
           <Link href="/suggestions">
             <span className="align-middle font-black text-navbar">
               Suggestions
@@ -54,7 +86,9 @@ export default function NavigationBar() {
             />
           </button>
 
-          <button className={buttonClasses + " ml-4 mr-6 w-56"}>
+          <button
+            className={buttonClasses + " ml-4 mr-6 w-56 border-taskbar_border"}
+          >
             <span className="align-middle font-black text-navbar">
               mael.reynaud
             </span>

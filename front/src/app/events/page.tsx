@@ -1,11 +1,114 @@
+"use client";
+
 import { Event } from "@/lib/types";
 import Image from "next/image";
 import Link from "next/link";
+import { useState, useEffect, useRef } from "react";
+
+type EventCardProps = {
+  event: Event;
+  i: number;
+  setCardHeight: (height: number) => void;
+};
+
+function EventCard({ event, i, setCardHeight }: EventCardProps) {
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (cardRef.current) {
+      setCardHeight(cardRef.current.offsetHeight);
+    }
+  }, [setCardHeight]);
+
+  const [onParticipantsList, setOnParticipantsList] = useState<boolean>(false);
+
+  return (
+    <div
+      ref={cardRef}
+      className={`bg-secondary border rounded-sm border-black block p-5 mt-5 ${i % 2 == 0 ? "" : "ml-auto"} w-8/12`}
+    >
+      <div className="flex">
+        <h1 className="text-2xl font-bold mb-1 mr-4">{event.name}</h1>
+        <Link href={event.link} target="_blank" className="mt-2">
+          <Image
+            src="/external-link.png"
+            alt="external link"
+            width={16}
+            height={16}
+          />
+        </Link>
+      </div>
+      <h2 className="text-lg">{event.place}</h2>
+      <h3 className="text-sm mb-4">
+        {event.end_date == null
+          ? event.start_date.toLocaleString().split(",")[0]
+          : `du ${event.start_date.toLocaleString().split(",")[0]} au ${
+              event.end_date.toLocaleString().split(",")[0]
+            }`}
+      </h3>
+      <p className="mb-4">{event.about}</p>
+      <p className="text-sm mb-5">{`par ${event.by}`}</p>
+      <div className="flex">
+        <button className="text-xs p-2 bg-taskbar_button border border-black rounded-md font-bold mr-4 hover:bg-taskbar_button_hover">
+          😊 J'y serai !
+        </button>
+        <p
+          onMouseEnter={() => setOnParticipantsList(true)}
+          onMouseOut={() => setOnParticipantsList(false)}
+          className="text-xs mt-auto mb-auto hover:cursor-grab"
+        >
+          Voir la liste des participants
+        </p>
+        {onParticipantsList ? <p>GROS CACA</p> : null}
+      </div>
+    </div>
+  );
+}
+
+function Loading() {
+  return (
+    <div
+      className="w-full flex justify-center items-center"
+      style={{ height: "calc(100vh - 100px)" }}
+    >
+      <style jsx>{`
+        .loader {
+          border: 16px solid #999999;
+          border-top: 16px solid #bab7b7;
+          border-radius: 50%;
+          width: 120px;
+          height: 120px;
+          animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+          0% {
+            transform: rotate(0deg);
+          }
+          100% {
+            transform: rotate(360deg);
+          }
+        }
+      `}</style>
+      <div className="loader" />
+    </div>
+  );
+}
 
 export default function Events() {
-  const events: Array<Event> = [];
+  const [loading, setLoading] = useState<boolean>(true);
+  const [cardHeights, setCardHeights] = useState<{ [key: number]: number }>({});
 
-  for (var i of [1, 2, 3, 4, 5]) {
+  useEffect(() => {
+    setLoading(false);
+  }, []);
+
+  const setCardHeight = (index: number, height: number) => {
+    setCardHeights((prev) => ({ ...prev, [index]: height }));
+  };
+
+  const events: Array<Event> = [];
+  for (let i of [1, 2, 3, 4, 5]) {
     events.push({
       name: "SCIA website development",
       link: "https://github.com/TopAgrume/SCIA_website",
@@ -21,37 +124,59 @@ export default function Events() {
 
   return (
     <div className="flex flex-wrap p-5">
-      <div className="bg-secondary border rounded-sm border-black block p-5">
-        <div className="flex">
-          <h1 className="text-2xl font-bold mb-1 mr-4">{events[0].name}</h1>
-          <Link href={events[0].link} target="_blank" className="mt-2">
-            <Image
-              src="/external-link.png"
-              alt="external link"
-              width={16}
-              height={16}
-            />
-          </Link>
-        </div>
-        <h2 className="text-lg">{events[0].place}</h2>
-        <h3 className="text-sm mb-4">
-          {events[0].end_date == null
-            ? events[0].start_date.toLocaleString().split(",")[0]
-            : `du ${events[0].start_date.toLocaleString().split(",")[0]} au ${
-                events[0].end_date.toLocaleString().split(",")[0]
-              }`}
-        </h3>
-        <p className="mb-4">{events[0].about}</p>
-        <p className="text-sm mb-5">{`par ${events[0].by}`}</p>
-        <div className="flex">
-          <button className="text-xs p-2 bg-taskbar_button border border-black rounded-md font-bold mr-4 hover:bg-taskbar_button_hover">
-            😊 J'y serai !
-          </button>
-          <p className="text-xs mt-auto mb-auto">
-            Voir la liste des participants
-          </p>
-        </div>
-      </div>
+      {loading ? (
+        <Loading />
+      ) : (
+        events.map((event, i) => {
+          const cardHeight = cardHeights[i] || "auto";
+
+          return (
+            <div key={i} className="flex w-full mb-5">
+              {i % 2 === 0 ? (
+                <>
+                  <EventCard
+                    key={i}
+                    event={event}
+                    i={i}
+                    setCardHeight={(height) => setCardHeight(i, height)}
+                  />
+                  <div
+                    className={`ml-5 relative w-4/12 mt-5`}
+                    style={{ height: cardHeight }}
+                  >
+                    <Image
+                      src={`/cats/${i}.jpg`}
+                      alt="goofy cat"
+                      layout="fill"
+                      objectFit="fill"
+                    />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div
+                    className={`mr-5 relative w-4/12 mt-5`}
+                    style={{ height: cardHeight }}
+                  >
+                    <Image
+                      src={`/cats/${i}.jpg`}
+                      alt="goofy cat"
+                      layout="fill"
+                      objectFit="fill"
+                    />
+                  </div>
+                  <EventCard
+                    key={i}
+                    event={event}
+                    i={i}
+                    setCardHeight={(height) => setCardHeight(i, height)}
+                  />
+                </>
+              )}
+            </div>
+          );
+        })
+      )}
     </div>
   );
 }
