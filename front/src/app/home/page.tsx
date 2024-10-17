@@ -1,4 +1,13 @@
 import Link from "next/link";
+import WeeklyCalendar from "./WeeklyCalendar";
+import { promises as fs } from 'fs';
+import path from 'path';
+
+async function getIcsData() {
+  const filePath = path.join(process.cwd(), 'public', 'calendar.ics');
+  const icsData = await fs.readFile(filePath, 'utf8');
+  return icsData;
+}
 
 function Presentation() {
   return (
@@ -87,16 +96,26 @@ function AiNews() {
   );
 }
 
-export default function Home() {
+function CalendarSection({ icsData }: { icsData: string }) {
   return (
-    <div className="grid grid-cols-9 grid-rows-10 gap-6 p-5">
-      <Presentation />
       <div
-        style={{ gridArea: "1 / 5 / 6 / 10" }}
-        className="bg-secondary border border-black"
-      ></div>
-      <Links />
-      <AiNews />
-    </div>
+          style={{ gridArea: "1 / 5 / 6 / 10" }}
+          className="bg-secondary border border-black overflow-auto"
+      >
+        <WeeklyCalendar icsData={icsData} />
+      </div>
+  );
+}
+
+export default async function Home() {
+  const icsData = await getIcsData();
+
+  return (
+      <div className="grid grid-cols-9 grid-rows-10 gap-6 p-5">
+        <Presentation />
+        <CalendarSection icsData={icsData} />
+        <Links />
+        <AiNews />
+      </div>
   );
 }
