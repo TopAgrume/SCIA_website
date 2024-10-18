@@ -1,6 +1,6 @@
 import "./globals.css";
-import NavigationBar from "../components/NavigationBar";
 import { JetBrains_Mono } from "next/font/google";
+import ClientLayout from "./ClientLayout";
 
 const jetbrains_mono = JetBrains_Mono({
   weight: ["400", "700", "800"],
@@ -8,17 +8,16 @@ const jetbrains_mono = JetBrains_Mono({
 });
 
 export default function RootLayout({
-  children,
-}: Readonly<{
+                                     children,
+                                   }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+      <html lang="en">
       <body className={`${jetbrains_mono.className} antialiased bg-primary`}>
-        <script>0</script>
-        <NavigationBar />
-        {children}
+      <ClientLayout>{children}</ClientLayout>
+      <script>0</script>
       </body>
-    </html>
+      </html>
   );
 }
