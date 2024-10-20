@@ -6,7 +6,7 @@ function Presentation() {
       style={{ gridArea: "1 / 1 / 4 / 5" }}
       className="bg-secondary border border-black block p-6"
     >
-      <h1 className="tracking-tighter  text-navbar font-extrabold mb-6">
+      <h1 className="tracking-tighter text-navbar font-extrabold mb-6">
         Bienvenue sur le site de la majeure SCIA d’EPITA !
       </h1>
       <p className="tracking-tighter mb-6">
@@ -89,7 +89,7 @@ function AiNews() {
 
 export default function Home() {
   return (
-    <div className="grid grid-cols-9 grid-rows-10 gap-6 p-5">
+    <div className="grid grid-cols-9 grid-rows-10 gap-6 p-5 bg-gray-200">
       <Presentation />
       <div
         style={{ gridArea: "1 / 5 / 6 / 10" }}

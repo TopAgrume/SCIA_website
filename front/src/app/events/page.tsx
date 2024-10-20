@@ -1,5 +1,6 @@
 "use client";
 
+import Badge from "@/components/Badge";
 import { Event } from "@/lib/types";
 import Image from "next/image";
 import Link from "next/link";
@@ -7,18 +8,21 @@ import { useState, useEffect, useRef } from "react";
 
 type EventCardProps = {
   event: Event;
-  i: number;
+  index: number;
 };
 
-function EventCard({ event, i }: EventCardProps) {
+function EventCard({ event, index: i }: EventCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
 
   const [onParticipantsList, setOnParticipantsList] = useState<boolean>(false);
+  const [attending, setAttending] = useState<boolean>(event.attending);
 
   return (
     <div
       ref={cardRef}
-      className={`bg-secondary border rounded-sm border-black block p-5 mt-5 ${i % 2 == 0 ? "" : "ml-auto"} w-8/12`}
+      className={`bg-secondary border rounded-sm border-black block p-5 mt-5 ${
+        i % 2 == 0 ? "" : "ml-auto"
+      } w-8/12`}
     >
       <div className="flex">
         <h1 className="text-2xl font-bold mb-1 mr-4">{event.name}</h1>
@@ -30,6 +34,7 @@ function EventCard({ event, i }: EventCardProps) {
             height={16}
           />
         </Link>
+        <Badge start_date={event.start_date} end_date={event.end_date} />
       </div>
       <h2 className="text-lg">{event.place}</h2>
       <h3 className="text-sm mb-4">
@@ -41,18 +46,38 @@ function EventCard({ event, i }: EventCardProps) {
       </h3>
       <p className="mb-4">{event.about}</p>
       <p className="text-sm mb-5">{`par ${event.by}`}</p>
-      <div className="flex">
-        <button className="text-xs p-2 bg-taskbar_button border border-black rounded-md font-bold mr-4 hover:bg-taskbar_button_hover">
-          😊 J'y serai !
+
+      <div className="flex relative">
+        <button
+          className="text-xs p-2 bg-taskbar_button border border-black rounded-md font-bold mr-4 hover:bg-taskbar_button_hover"
+          onClick={() => {
+            setAttending(!attending);
+            // while updating in DB, loading button
+          }}
+        >
+          {!attending ? "😊 J'y serai !" : "Je n'y serai pas 😞"}
         </button>
+
         <p
           onMouseEnter={() => setOnParticipantsList(true)}
-          onMouseOut={() => setOnParticipantsList(false)}
-          className="text-xs mt-auto mb-auto hover:cursor-grab"
+          onMouseLeave={() => setOnParticipantsList(false)}
+          className="text-xs mt-auto mb-auto hover:cursor-grab mr-4"
         >
           Voir la liste des participants
         </p>
-        {onParticipantsList ? <p>GROS CACA</p> : null}
+
+        {/* Participants list absolutely positioned below the paragraph */}
+        {onParticipantsList && (
+          <div
+            className={`absolute ${!attending ? "left-36" : "left-44"} top-full mt-2 w-max border border-yellow-100 bg-yellow-50 text-xs p-2 rounded-sm shadow-lg z-10`}
+          >
+            {event.participants.map((participant, i) => (
+              <p key={`participant_${i}`} className="m-2">
+                {participant}
+              </p>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -96,22 +121,28 @@ export default function Events() {
   }, []);
 
   const events: Array<Event> = [];
-  for (let i of [1, 2, 3, 4, 5]) {
+  for (const i of [1, 2, 3, 4, 5]) {
     events.push({
       name: "SCIA website development",
       link: "https://github.com/TopAgrume/SCIA_website",
       place: "Paris",
       about:
         "C'est le développement du site internet de la majeure SCIA pour en faire un endroit accueillant, regroupant plein d'informations, de projets et de connaissances !",
-      start_date: new Date(2024, 10, 15),
-      end_date: new Date(2024, 10, 20),
+      start_date: new Date(2024, 9, 23 - i),
+      end_date: null,
       by: "Maël Reynaud & Alexandre Devaux-Rivière",
-      participants: ["mael.reynaud", "alexandre.devaux-riviere"],
+      attending: false,
+      participants: [
+        "mael.reynaud",
+        "alexandre.devaux-riviere",
+        "mael.reynaud",
+        "alexandre.devaux-riviere",
+      ],
     } as Event);
   }
 
   return (
-    <div className="flex flex-wrap p-5">
+    <div className="flex flex-wrap p-5 bg-gray-200">
       {loading ? (
         <Loading />
       ) : (
@@ -120,7 +151,7 @@ export default function Events() {
             <div key={i} className="flex w-full mb-5">
               {i % 2 === 0 ? (
                 <>
-                  <EventCard key={i} event={event} i={i} />
+                  <EventCard key={i} event={event} index={i} />
                   <div className={`ml-5 relative w-4/12 mt-5`}>
                     <Image
                       src={`/cats/${i}.jpg`}
@@ -140,7 +171,7 @@ export default function Events() {
                       objectFit="fill"
                     />
                   </div>
-                  <EventCard key={i} event={event} i={i} />
+                  <EventCard key={i} event={event} index={i} />
                 </>
               )}
             </div>

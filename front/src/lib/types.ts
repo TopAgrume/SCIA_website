@@ -6,6 +6,7 @@ type Event = {
   start_date: Date;
   end_date: Date | null;
   by: string;
+  attending: boolean;
   participants: Array<string>;
 };
 

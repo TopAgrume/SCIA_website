@@ -1,5 +1,5 @@
 import "./globals.css";
-import NavigationBar from "../components/NavigationBar";
+import NavigationBar from "@/components/NavigationBar";
 import { JetBrains_Mono } from "next/font/google";
 
 const jetbrains_mono = JetBrains_Mono({
