@@ -10,7 +10,7 @@ module.exports = {
     extend: {
       colors: {
         primary: "#ded4ec", // for background
-        secondary: "#d1c9dd", // for cards
+        secondary: "#e8e4ee", // for cards
         taskbar_main: "#bab7b7",
         taskbar_button: "#bab7cb",
         taskbar_button_hover: "#a19eaf",

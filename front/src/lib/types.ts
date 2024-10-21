@@ -8,6 +8,7 @@ type Event = {
   by: string;
   attending: boolean;
   participants: Array<string>;
+  is_author: boolean;
 };
 
 type User = {
@@ -20,7 +21,9 @@ type Project = {
   about: string;
   link: string;
   by: string;
-  photo: string;
+  photo: string | null;
+  date: Date;
+  is_author: boolean;
 };
 
 type Suggestion = {
@@ -29,6 +32,8 @@ type Suggestion = {
   name: string;
   summary: string;
   by: string;
+  date: Date;
+  is_author: boolean;
 };
 
-export type { Event };
+export type { Event, Project };

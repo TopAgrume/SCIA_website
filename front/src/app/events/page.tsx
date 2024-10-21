@@ -1,6 +1,7 @@
 "use client";
 
 import Badge from "@/components/Badge";
+import Loading from "@/components/Loading";
 import { Event } from "@/lib/types";
 import Image from "next/image";
 import Link from "next/link";
@@ -25,8 +26,14 @@ function EventCard({ event, index: i }: EventCardProps) {
       } w-8/12`}
     >
       <div className="flex">
-        <h1 className="text-2xl font-bold mb-1 mr-4">{event.name}</h1>
-        <Link href={event.link} target="_blank" className="mt-2">
+        <h1 className="text-2xl font-bold mt-auto mb-auto mr-4">
+          {event.name}
+        </h1>
+        <Link
+          href={event.link}
+          target="_blank"
+          className="mt-auto mb-auto hover:scale-110 duration-300"
+        >
           <Image
             src="/external-link.png"
             alt="external link"
@@ -34,6 +41,16 @@ function EventCard({ event, index: i }: EventCardProps) {
             height={16}
           />
         </Link>
+        {event.is_author ? (
+          <button className="ml-4 hover:scale-110 duration-300">
+            <Image
+              src="/settings.png"
+              alt="event settings"
+              width={20}
+              height={20}
+            />
+          </button>
+        ) : null}
         <Badge start_date={event.start_date} end_date={event.end_date} />
       </div>
       <h2 className="text-lg">{event.place}</h2>
@@ -83,32 +100,14 @@ function EventCard({ event, index: i }: EventCardProps) {
   );
 }
 
-function Loading() {
+function AddEvent() {
   return (
-    <div
-      className="w-full flex justify-center items-center"
-      style={{ height: "calc(100vh - 100px)" }}
-    >
-      <style jsx>{`
-        .loader {
-          border: 16px solid #999999;
-          border-top: 16px solid #bab7b7;
-          border-radius: 50%;
-          width: 120px;
-          height: 120px;
-          animation: spin 2s linear infinite;
-        }
-
-        @keyframes spin {
-          0% {
-            transform: rotate(0deg);
-          }
-          100% {
-            transform: rotate(360deg);
-          }
-        }
-      `}</style>
-      <div className="loader" />
+    <div className="ml-auto mr-auto flex">
+      <p className="p-2 font-bold">{"-> ->"}</p>
+      <button className="p-2 rounded-sm hover:bg-gray-300 font-bold">
+        Ajouter un évenement
+      </button>
+      <p className="p-2 font-bold">{"<- <-"}</p>
     </div>
   );
 }
@@ -123,7 +122,7 @@ export default function Events() {
   const events: Array<Event> = [];
   for (const i of [1, 2, 3, 4, 5]) {
     events.push({
-      name: "SCIA website development",
+      name: "Développement du site SCIA",
       link: "https://github.com/TopAgrume/SCIA_website",
       place: "Paris",
       about:
@@ -138,11 +137,13 @@ export default function Events() {
         "mael.reynaud",
         "alexandre.devaux-riviere",
       ],
+      is_author: i % 2 == 0,
     } as Event);
   }
 
   return (
     <div className="flex flex-wrap p-5 bg-gray-200">
+      <AddEvent />
       {loading ? (
         <Loading />
       ) : (
