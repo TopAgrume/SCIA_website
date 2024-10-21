@@ -1,1 +1,8 @@
 package-lock.json
+
+# Environment variables
+.env
+.env*.local
+
+# Prisma
+front/prisma/migrations/migration_lock.toml
