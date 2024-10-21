@@ -36,4 +36,4 @@ type Suggestion = {
   is_author: boolean;
 };
 
-export type { Event, Project };
+export type { Event, Project, Suggestion };
