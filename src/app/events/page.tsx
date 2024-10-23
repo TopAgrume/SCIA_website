@@ -6,6 +6,7 @@ import { type Event } from '@/lib/types';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
+import { ExternalLinkIcon, GearIcon } from '@radix-ui/react-icons';
 
 type EventCardProps = {
   event: Event;
@@ -34,21 +35,11 @@ function EventCard({ event, index: i }: EventCardProps) {
           target='_blank'
           className='mt-auto mb-auto hover:scale-110 duration-300'
         >
-          <Image
-            src='/external-link.png'
-            alt='external link'
-            width={16}
-            height={16}
-          />
+          <ExternalLinkIcon className='w-4 h-4' />
         </Link>
         {event.isAuthor ? (
           <button className='ml-4 hover:scale-110 duration-300'>
-            <Image
-              src='/settings.png'
-              alt='event settings'
-              width={20}
-              height={20}
-            />
+            <GearIcon className='w-5 h-5' />
           </button>
         ) : null}
         <Badge startDate={event.startDate} endDate={event.endDate} />
@@ -129,7 +120,7 @@ export default function Events() {
         "C'est le développement du site internet de la majeure SCIA pour en faire un endroit accueillant, regroupant plein d'informations, de projets et de connaissances !",
       startDate: new Date(2024, 9, 23 - i),
       endDate: null,
-      by: 'Maël Reynaud & Alexandre Devaux-Rivière',
+      by: 'Maël Reynaud & Alexandre Devaux-Rivière & Pierre-Louis Favreau',
       attending: false,
       participants: [
         'mael.reynaud',
