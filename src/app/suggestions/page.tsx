@@ -1,4 +1,4 @@
-import { Suggestion } from "@/lib/types";
+import { type Suggestion } from '@/lib/types';
 
 type SuggestionProps = {
   indice: number;
@@ -11,7 +11,7 @@ function SuggestionCard({ indice }: SuggestionProps) {
       style={{
         gridArea: `${Math.floor((indice + 1) / 4)} ${(indice % 4) + 1} ${Math.floor((indice + 1) / 4) + 1} ${(indice % 4) + 2}`,
       }}
-      className="bg-blue-50 h-80"
+      className='bg-blue-50 h-80'
     >
       {indice}
     </div>
@@ -23,14 +23,14 @@ export default function Suggestions() {
 
   for (const i of [1, 2, 3, 4]) {
     suggestions.push({
-      name: "Attention is all you need",
-      type: "article",
-      by: "Maël Reynaud",
+      name: 'Attention is all you need',
+      type: 'article',
+      by: 'Maël Reynaud',
       date: new Date(21, 9, 2024),
       is_author: true,
-      link: "https://arxiv.org/pdf/1706.03762",
+      link: 'https://arxiv.org/pdf/1706.03762',
       summary:
-        "Article presenting a new architecture called Transformer which uses attention mechanism.",
+        'Article presenting a new architecture called Transformer which uses attention mechanism.',
     } as Suggestion);
   }
 

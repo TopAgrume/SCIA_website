@@ -1,8 +1,8 @@
 export default function Loading() {
   return (
     <div
-      className="w-full flex justify-center items-center"
-      style={{ height: "calc(100vh - 100px)" }}
+      className='w-full flex justify-center items-center'
+      style={{ height: 'calc(100vh - 100px)' }}
     >
       <style jsx>{`
         .loader {
@@ -23,7 +23,7 @@ export default function Loading() {
           }
         }
       `}</style>
-      <div className="loader" />
+      <div className='loader' />
     </div>
   );
 }

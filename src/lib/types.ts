@@ -27,7 +27,7 @@ type Project = {
 };
 
 type Suggestion = {
-  type: "article" | "video" | "other";
+  type: 'article' | 'video' | 'other';
   link: string;
   name: string;
   summary: string;
