@@ -1,19 +1,76 @@
 import { Suggestion } from "@/lib/types";
+import Image from "next/image";
+import Link from "next/link";
+
+function AddSuggestion() {
+  return (
+    <div className="w-screen flex items-center justify-center">
+      <div className="ml-auto mr-auto flex">
+        <p className="p-2 font-bold">{"-> ->"}</p>
+        <button className="p-2 rounded-sm hover:bg-gray-300 font-bold">
+          Ajouter une suggestion
+        </button>
+        <p className="p-2 font-bold">{"<- <-"}</p>
+      </div>
+    </div>
+  );
+}
 
 type SuggestionProps = {
   indice: number;
   suggestion: Suggestion;
 };
 
-function SuggestionCard({ indice }: SuggestionProps) {
+function SuggestionCard({ indice, suggestion }: SuggestionProps) {
   return (
     <div
       style={{
-        gridArea: `${Math.floor((indice + 1) / 4)} ${(indice % 4) + 1} ${Math.floor((indice + 1) / 4) + 1} ${(indice % 4) + 2}`,
+        gridArea: `${Math.floor((indice + 1) / 3)} ${(indice % 3) + 1} ${Math.floor((indice + 1) / 3) + 1} ${(indice % 3) + 2}`,
       }}
-      className="bg-blue-50 h-80"
+      className="bg-secondary border rounded-sm border-black block p-5"
     >
-      {indice}
+      <div className="flex">
+        <h1 className="text-lg font-bold">{suggestion.name}</h1>
+        {suggestion.is_author ? (
+          <button className="ml-4 hover:scale-110 duration-300">
+            <Image
+              src="/settings.png"
+              alt="settings logo"
+              width={20}
+              height={20}
+            />
+          </button>
+        ) : null}
+      </div>
+      {suggestion.type === "article" ? (
+        <Link
+          href={suggestion.link}
+          target="_blank"
+          className="text-red-400 text-sm"
+        >
+          {"📰 Lien vers l'article"}
+        </Link>
+      ) : (
+        <div className="flex items-center">
+          <Image
+            className="mr-2"
+            src="/youtube.png"
+            alt="youtube logo"
+            width={20}
+            height={20}
+          />
+          <Link
+            href={suggestion.link}
+            target="_blank"
+            className="text-red-400 text-sm"
+          >
+            {"Lien vers la vidéo"}
+          </Link>
+        </div>
+      )}
+      <p className="mt-3">{suggestion.summary}</p>
+      <p className="text-sm mt-5">{`par ${suggestion.by}`}</p>
+      <p className="mt-1 text-xs">{`posté le ${suggestion.date.toLocaleString().split(",")[0]}`}</p>
     </div>
   );
 }
@@ -21,12 +78,12 @@ function SuggestionCard({ indice }: SuggestionProps) {
 export default function Suggestions() {
   const suggestions: Array<Suggestion> = [];
 
-  for (const i of [1, 2, 3, 4]) {
+  for (const i of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]) {
     suggestions.push({
       name: "Attention is all you need",
-      type: "article",
+      type: i % 2 === 0 ? "article" : "video",
       by: "Maël Reynaud",
-      date: new Date(21, 9, 2024),
+      date: new Date(2024, 9, 21),
       is_author: true,
       link: "https://arxiv.org/pdf/1706.03762",
       summary:
@@ -35,46 +92,21 @@ export default function Suggestions() {
   }
 
   return (
-    <div
-      className={`grid grid-cols-4 grid-rows-${Math.ceil(suggestions.length / 4)} gap-6 pad-5 bg-gray-200 p-5`}
-    >
-      {suggestions.map((suggestion, i) => {
-        return (
-          <SuggestionCard
-            key={`suggestion_${i}`}
-            indice={i}
-            suggestion={suggestion}
-          />
-        );
-      })}
+    <div className="pt-4">
+      <AddSuggestion />
+      <div
+        className={`grid grid-cols-3 grid-rows-${Math.ceil(suggestions.length / 4)} gap-6 pad-5 p-5`}
+      >
+        {suggestions.map((suggestion, i) => {
+          return (
+            <SuggestionCard
+              key={`suggestion_${i}`}
+              indice={i}
+              suggestion={suggestion}
+            />
+          );
+        })}
+      </div>
     </div>
   );
 }
-
-/*
-
-.div1 { grid-area: 1 / 1 / 2 / 2; }
-.div2 { grid-area: 1 / 2 / 2 / 3; }
-.div3 { grid-area: 1 / 3 / 2 / 4; }
-.div4 { grid-area: 1 / 4 / 2 / 5; }
-
-.div5 { grid-area: 2 / 1 / 3 / 2; }
-.div6 { grid-area: 2 / 2 / 3 / 3; }
-.div7 { grid-area: 2 / 3 / 3 / 4; }
-.div8 { grid-area: 2 / 4 / 3 / 5; }
-
-.div9 { grid-area: 3 / 1 / 4 / 2; }
-.div10 { grid-area: 3 / 2 / 4 / 3; }
-.div11 { grid-area: 3 / 3 / 4 / 4; }
-.div12 { grid-area: 3 / 4 / 4 / 5; }
-
-.div13 { grid-area: 4 / 1 / 5 / 2; }
-.div14 { grid-area: 4 / 2 / 5 / 3; }
-.div15 { grid-area: 4 / 3 / 5 / 4; }
-.div16 { grid-area: 4 / 4 / 5 / 5; }
-
-.div17 { grid-area: 5 / 1 / 6 / 2; }
-.div18 { grid-area: 5 / 2 / 6 / 3; }
-.div19 { grid-area: 5 / 3 / 6 / 4; }
-.div20 { grid-area: 5 / 4 / 6 / 5; }
-*/
