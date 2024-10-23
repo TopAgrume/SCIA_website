@@ -3,18 +3,18 @@ type Event = {
   link: string;
   place: string;
   about: string;
-  start_date: Date;
-  end_date: Date | null;
+  startDate: Date;
+  endDate: Date | null;
   by: string;
   attending: boolean;
   participants: Array<string>;
-  is_author: boolean;
+  isAuthor: boolean;
 };
 
-type User = {
-  login: string;
-  mail: string;
-};
+// type User = {
+//   login: string;
+//   mail: string;
+// };
 
 type Project = {
   name: string;
@@ -23,7 +23,7 @@ type Project = {
   by: string;
   photo: string | null;
   date: Date;
-  is_author: boolean;
+  isAuthor: boolean;
 };
 
 type Suggestion = {
@@ -33,7 +33,7 @@ type Suggestion = {
   summary: string;
   by: string;
   date: Date;
-  is_author: boolean;
+  isAuthor: boolean;
 };
 
 export type { Event, Project, Suggestion };

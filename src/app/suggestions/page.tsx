@@ -21,13 +21,13 @@ function SuggestionCard({ indice }: SuggestionProps) {
 export default function Suggestions() {
   const suggestions: Array<Suggestion> = [];
 
-  for (const i of [1, 2, 3, 4]) {
+  for (let i = 0; i < 4; i++) {
     suggestions.push({
       name: 'Attention is all you need',
       type: 'article',
       by: 'Maël Reynaud',
       date: new Date(21, 9, 2024),
-      is_author: true,
+      isAuthor: true,
       link: 'https://arxiv.org/pdf/1706.03762',
       summary:
         'Article presenting a new architecture called Transformer which uses attention mechanism.',

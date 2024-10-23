@@ -1,5 +1,5 @@
 'use client';
-
+// eslint-disable-next-line camelcase
 import { Jersey_25 } from 'next/font/google';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -17,7 +17,7 @@ export default function NavigationBar() {
     'mt-auto mb-auto ml-2 mr-2 w-32 h-8 border flex justify-center items-center rounded-sm transition-all duration-300 bg-taskbar_button hover:bg-taskbar_button_hover';
 
   return (
-    <div className='sticky top-0 z-50'>
+    <div className='top-0 z-50 sticky'>
       <div className={`w-full h-10 flex ${jersey.className} bg-taskbar_main`}>
         <div className='flex m-1 ml-4'>
           <Image src='/logo.png' alt='logo' width={34} height={40} />
@@ -29,7 +29,7 @@ export default function NavigationBar() {
             ` ml-4 ${pathname === '/home' ? 'border-black' : 'border-taskbar_border'}`
           }
         >
-          <span className='align-middle font-black text-navbar'>Accueil</span>
+          <span className='font-black text-navbar align-middle'>Accueil</span>
         </Link>
 
         <Link
@@ -41,7 +41,7 @@ export default function NavigationBar() {
               : '  border-taskbar_border')
           }
         >
-          <span className='align-middle font-black text-navbar transform-none'>
+          <span className='font-black text-navbar transform-none align-middle'>
             Evenements
           </span>
         </Link>
@@ -55,7 +55,7 @@ export default function NavigationBar() {
               : ' border-taskbar_border')
           }
         >
-          <span className='align-middle font-black text-navbar'>Projets</span>
+          <span className='font-black text-navbar align-middle'>Projets</span>
         </Link>
 
         <Link
@@ -67,13 +67,13 @@ export default function NavigationBar() {
               : ' border-taskbar_border')
           }
         >
-          <span className='align-middle font-black text-navbar'>
+          <span className='font-black text-navbar align-middle'>
             Suggestions
           </span>
         </Link>
 
         <div className='flex ml-auto'>
-          <button className='rounded-full pl-1 pr-1 mt-1 mb-1 hover:bg-taskbar_button_hover duration-500'>
+          <button className='hover:bg-taskbar_button_hover mt-1 mb-1 pr-1 pl-1 rounded-full duration-500'>
             <Image
               src='/moon.png'
               alt='light/dark mode'
@@ -85,13 +85,13 @@ export default function NavigationBar() {
           <button
             className={buttonClasses + ' ml-4 mr-6 w-56 border-taskbar_border'}
           >
-            <span className='align-middle font-black text-navbar'>
+            <span className='font-black text-navbar align-middle'>
               mael.reynaud
             </span>
           </button>
         </div>
       </div>
-      <div className='w-full h-0.5 bg-black' />
+      <div className='bg-black w-full h-0.5' />
     </div>
   );
 }

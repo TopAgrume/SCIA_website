@@ -1,8 +1,9 @@
-import './globals.css';
 import NavigationBar from '@/components/NavigationBar';
+import './globals.css';
+// eslint-disable-next-line camelcase
 import { JetBrains_Mono } from 'next/font/google';
 
-const jetbrains_mono = JetBrains_Mono({
+const jetbrainsMono = JetBrains_Mono({
   weight: ['400', '700', '800'],
   subsets: ['latin'],
 });
@@ -14,7 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='en'>
-      <body className={`${jetbrains_mono.className} antialiased bg-primary`}>
+      <body className={`${jetbrainsMono.className} antialiased bg-primary`}>
         <script>0</script>
         <NavigationBar />
         {children}

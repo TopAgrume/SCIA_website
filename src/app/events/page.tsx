@@ -5,7 +5,7 @@ import Loading from '@/components/Loading';
 import { type Event } from '@/lib/types';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 type EventCardProps = {
   event: Event;
@@ -41,7 +41,7 @@ function EventCard({ event, index: i }: EventCardProps) {
             height={16}
           />
         </Link>
-        {event.is_author ? (
+        {event.isAuthor ? (
           <button className='ml-4 hover:scale-110 duration-300'>
             <Image
               src='/settings.png'
@@ -51,14 +51,14 @@ function EventCard({ event, index: i }: EventCardProps) {
             />
           </button>
         ) : null}
-        <Badge start_date={event.start_date} end_date={event.end_date} />
+        <Badge startDate={event.startDate} endDate={event.endDate} />
       </div>
       <h2 className='text-lg'>{event.place}</h2>
       <h3 className='mb-4 text-sm'>
-        {event.end_date == null
-          ? event.start_date.toLocaleString().split(',')[0]
-          : `du ${event.start_date.toLocaleString().split(',')[0]} au ${
-              event.end_date.toLocaleString().split(',')[0]
+        {event.endDate == null
+          ? event.startDate.toLocaleString().split(',')[0]
+          : `du ${event.startDate.toLocaleString().split(',')[0]} au ${
+              event.endDate.toLocaleString().split(',')[0]
             }`}
       </h3>
       <p className='mb-4'>{event.about}</p>

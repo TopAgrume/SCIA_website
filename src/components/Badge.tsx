@@ -1,23 +1,23 @@
 type BadgeProps = {
-  start_date: Date;
-  end_date: Date | null;
+  startDate: Date;
+  endDate: Date | null;
 };
 
-export default function Badge({ start_date, end_date }: BadgeProps) {
-  return start_date.getTime() > new Date().getTime() ? (
-    <div className='ml-auto border-blue-400 border p-2 rounded-sm bg-blue-200 font-bold'>
+export default function Badge({ startDate, endDate }: BadgeProps) {
+  return startDate.getTime() > new Date().getTime() ? (
+    <div className='bg-blue-200 ml-auto p-2 border border-blue-400 rounded-sm font-bold'>
       A venir ⌛
     </div>
-  ) : (end_date == null &&
-      new Date().getTime() >= start_date.getTime() &&
-      new Date().getTime() <= start_date.getTime() + 86400000) ||
-    (end_date != null &&
-      new Date().getTime() <= end_date.getTime() + 86400000) ? (
-    <div className='ml-auto border-green-400 border p-2 rounded-sm bg-green-200 font-bold'>
+  ) : (endDate == null &&
+      new Date().getTime() >= startDate.getTime() &&
+      new Date().getTime() <= startDate.getTime() + 86400000) ||
+    (endDate != null &&
+      new Date().getTime() <= endDate.getTime() + 86400000) ? (
+    <div className='border-green-400 bg-green-200 ml-auto p-2 border rounded-sm font-bold'>
       En cours 😜
     </div>
   ) : (
-    <div className='ml-auto border-red-400 border p-2 rounded-sm bg-red-200 font-bold'>
+    <div className='bg-red-200 ml-auto p-2 border border-red-400 rounded-sm font-bold'>
       Terminé 😔
     </div>
   );

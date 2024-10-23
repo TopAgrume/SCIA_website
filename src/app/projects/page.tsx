@@ -1,15 +1,15 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import Loading from '@/components/Loading';
 import { type Project } from '@/lib/types';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 function Integrations() {
   return (
-    <div className='w-1/2 h-[calc(100vh-42px)] overflow-y-auto p-4 bg-gray-200'>
-      <h1 className='text-xl font-bold mb-4'>Intégrations</h1>
+    <div className='bg-gray-200 p-4 w-1/2 h-[calc(100vh-42px)] overflow-y-auto'>
+      <h1 className='mb-4 font-bold text-xl'>Intégrations</h1>
     </div>
   );
 }
@@ -20,11 +20,11 @@ type PresentationCardProps = {
 
 function PresentationCard({ project }: PresentationCardProps) {
   return (
-    <div className='bg-secondary border rounded-sm border-black p-5 mt-5 flex'>
+    <div className='flex bg-secondary mt-5 p-5 border border-black rounded-sm'>
       <div className={`w-${project.photo != null ? '2/3' : 'full'}`}>
         <div className='flex'>
-          <h2 className='text-xl font-bold'>{project.name}</h2>
-          {project.is_author ? (
+          <h2 className='font-bold text-xl'>{project.name}</h2>
+          {project.isAuthor ? (
             <button className='ml-2 hover:scale-110 duration-300'>
               <Image
                 src='/settings.png'
@@ -35,11 +35,11 @@ function PresentationCard({ project }: PresentationCardProps) {
             </button>
           ) : null}
         </div>
-        <div className='mt-2 flex items-center'>
+        <div className='flex items-center mt-2'>
           <Image src='/github.png' alt='github logo' height={16} width={16} />
           <Link
             target='_blank'
-            className='text-sm text-red-400 ml-2 font-bold'
+            className='ml-2 font-bold text-red-400 text-sm'
             href={project.link}
           >
             lien vers le projet
@@ -50,7 +50,7 @@ function PresentationCard({ project }: PresentationCardProps) {
         <p className='mt-1 text-xs'>{`posté le ${project.date.toLocaleString().split(',')[0]}`}</p>
       </div>
       {project.photo != null ? (
-        <div className='w-1/3 relative'>
+        <div className='relative w-1/3'>
           <Image
             fill
             objectFit='cover'
@@ -69,10 +69,10 @@ type PresentationsProps = {
 
 function Presentations({ presentations }: PresentationsProps) {
   return (
-    <div className='w-1/2 h-[calc(100vh-42px)] overflow-y-auto p-4 bg-gray-200'>
+    <div className='bg-gray-200 p-4 w-1/2 h-[calc(100vh-42px)] overflow-y-auto'>
       <div className='flex mb-4'>
-        <h1 className='text-xl font-bold'>Présentations</h1>
-        <button className='ml-auto text-sm mt-auto mb-auto hover:bg-gray-300 p-1 rounded-sm'>
+        <h1 className='font-bold text-xl'>Présentations</h1>
+        <button className='hover:bg-gray-300 mt-auto mb-auto ml-auto p-1 rounded-sm text-sm'>
           Ajouter un projet
         </button>
       </div>
@@ -96,7 +96,7 @@ export default function Projects() {
       by: 'Maël Reynaud',
       photo: '/transformer.png',
       date: new Date(2024, 9, 21),
-      is_author: i % 2 == 0,
+      isAuthor: i % 2 == 0,
     } as Project);
   }
 
@@ -104,13 +104,13 @@ export default function Projects() {
     setLoading(false);
   }, []);
   return (
-    <div className='h-[calc(100vh-42px)] flex'>
+    <div className='flex h-[calc(100vh-42px)]'>
       {loading ? (
         <Loading />
       ) : (
         <>
           <Integrations />
-          <div className='w-[2px] h-[calc(100vh-42px)] bg-gray-400'></div>
+          <div className='bg-gray-400 w-[2px] h-[calc(100vh-42px)]'></div>
           <Presentations presentations={projects} />
         </>
       )}
