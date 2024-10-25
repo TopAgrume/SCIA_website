@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
 import { Bell, Calendar, Folder, Home, Moon, Sun, User } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
+import { useDarkMode } from '@/providers/DarkModeProvider';
 
 function NavItem({
   icon,
@@ -34,7 +34,7 @@ function NavItem({
 
 export default function NavigationBar() {
   const pathname = usePathname();
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const { isDarkMode, toggleDarkMode } = useDarkMode();
 
   return (
     <header className='top-0 z-50 sticky bg-gray-200 dark:bg-gray-700 shadow'>
@@ -71,7 +71,7 @@ export default function NavigationBar() {
         </nav>
         <div className='flex items-center space-x-4'>
           <button
-            onClick={() => setIsDarkMode(!isDarkMode)}
+            onClick={toggleDarkMode}
             className='bg-gray-300 dark:bg-gray-600 p-2 rounded-full'
             aria-label='Toggle dark mode'
           >

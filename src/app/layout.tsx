@@ -5,6 +5,7 @@ import './globals.css';
 // eslint-disable-next-line camelcase
 import { JetBrains_Mono } from 'next/font/google';
 import QueryProvider from '@/providers/QueryProvider';
+import { DarkModeProvider } from '@/providers/DarkModeProvider';
 
 const jetbrainsMono = JetBrains_Mono({
   weight: ['400', '700', '800'],
@@ -18,10 +19,16 @@ export default function RootLayout({
 }) {
   return (
     <html lang='en'>
-      <body className={`${jetbrainsMono.className} antialiased bg-gray-200`}>
+      <body
+        className={`${jetbrainsMono.className} antialiased bg-gray-50 dark:bg-gray-800`}
+      >
         <script>0</script>
-        <NavigationBar />
-        <QueryProvider>{children}</QueryProvider>
+        <DarkModeProvider>
+          <QueryProvider>
+            <NavigationBar />
+            {children}
+          </QueryProvider>
+        </DarkModeProvider>
       </body>
     </html>
   );

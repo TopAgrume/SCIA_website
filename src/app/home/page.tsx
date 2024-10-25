@@ -13,21 +13,23 @@ import { ErrorBoundary } from 'react-error-boundary';
 function Presentation() {
   return (
     <Card>
-      <h2 className='mb-4 font-bold text-2xl'>
+      <h2 className='mb-4 font-bold text-2xl text-gray-800 dark:text-gray-100'>
         Bienvenue sur le site de la majeure SCIA d'EPITA !
       </h2>
-      <p className='mb-4'>
+      <p className='mb-4 text-gray-600 dark:text-gray-300'>
         Ce site est le site officiel de la majeure SCIA d'EPITA, sur lequel vous
         pourrez retrouver pleins d'informations et de projets super intéressants
         ! N'hésitez pas à faire des suggestions d'article scientifique, vidéo,
         ou de quelconque ressource en rapport avec l'IA ou la Data dans la
         partie Suggestions !
       </p>
-      <p className='mb-4'>
+      <p className='mb-4 text-gray-600 dark:text-gray-300'>
         Pour tout problème, proposition d'amélioration, demande ou réclamation,
         veuillez vous adresser directement à Mr Devaux-Rivière.
       </p>
-      <p className='font-semibold'>This website is all you need.</p>
+      <p className='font-semibold text-gray-800 dark:text-gray-100'>
+        This website is all you need.
+      </p>
     </Card>
   );
 }
@@ -35,13 +37,15 @@ function Presentation() {
 function Links() {
   return (
     <Card>
-      <h2 className='mb-4 font-bold text-2xl'>Liens utiles</h2>
+      <h2 className='mb-4 font-bold text-2xl text-gray-800 dark:text-gray-100'>
+        Liens utiles
+      </h2>
       <ul className='space-y-4'>
         <li>
           <Link
             href='https://discord.gg/B4hdx4HV'
             target='_blank'
-            className='flex items-center text-gray-600 hover:text-gray-800 dark:hover:text-gray-100 dark:text-gray-300 transition-colors group'
+            className='flex items-center text-gray-600 hover:text-gray-800 dark:hover:text-white dark:text-gray-300 transition-colors group'
           >
             <Image
               src='/discord.png'
@@ -58,7 +62,7 @@ function Links() {
           <Link
             href='https://www.wolframalpha.com/'
             target='_blank'
-            className='flex items-center text-gray-600 hover:text-gray-800 dark:hover:text-gray-100 dark:text-gray-300 transition-colors group'
+            className='flex items-center text-gray-600 hover:text-gray-800 dark:hover:text-white dark:text-gray-300 transition-colors group'
           >
             <Image
               src='/wolfram.png'
@@ -115,16 +119,16 @@ function AiNewsContent() {
         return (
           <div
             key={item.uri}
-            className='border-gray-200 dark:border-gray-600 last:border-0 pb-4 last:pb-0 border-b'
+            className='border-gray-200 dark:border-gray-800 last:border-0 pb-4 last:pb-0 border-b'
           >
-            <div className='flex items-center text-gray-600 hover:text-gray-800 dark:hover:text-gray-100 dark:text-gray-300 group'>
+            <div className='flex items-center group'>
               <div className='flex-grow'>
                 <div className='flex items-start'>
                   <div>
-                    <h3 className='font-medium'>
+                    <h3 className='font-medium text-gray-800 dark:text-gray-100'>
                       {item.title?.eng || 'No title'}
                     </h3>
-                    <p className='mt-1 text-gray-500 text-sm dark:text-gray-400'>
+                    <p className='mt-1 text-gray-600 text-sm dark:text-gray-300'>
                       {displayText}
                       {shouldTruncate && (
                         <button
@@ -135,13 +139,11 @@ function AiNewsContent() {
                         </button>
                       )}
                     </p>
-                    <div className='flex items-center mt-2 text-gray-400 text-xs dark:text-gray-500'>
+                    <div className='flex items-center mt-2 text-gray-500 text-xs dark:text-gray-400'>
                       <span>
-                        {mounted
-                          ? format(new Date(item.eventDate), 'dd MMMM yyyy', {
-                              locale: fr,
-                            })
-                          : item.eventDate}
+                        {format(new Date(item.eventDate), 'dd MMMM yyyy', {
+                          locale: fr,
+                        })}
                       </span>
                       <span className='mx-2'>•</span>
                       <span>{item.totalArticleCount} articles</span>
@@ -158,7 +160,7 @@ function AiNewsContent() {
                       {item.concepts?.slice(0, 3).map(concept => (
                         <span
                           key={concept.uri}
-                          className='bg-gray-300 dark:bg-gray-600 px-2 py-1 rounded text-xs'
+                          className='bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-gray-700 text-xs dark:text-gray-300'
                         >
                           {concept.label?.eng || concept.uri}
                         </span>
@@ -217,8 +219,10 @@ function AiNewsLoading() {
 function AiNews() {
   return (
     <Card className='mt-8'>
-      <h2 className='font-bold text-2xl'>Actualités IA</h2>
-      <h2 className='mb-4 font-bold text-gray-600 dark:text-gray-400'>
+      <h2 className='font-bold text-2xl text-gray-800 dark:text-gray-100'>
+        Actualités IA
+      </h2>
+      <h2 className='mb-4 font-bold text-gray-500 dark:text-gray-400'>
         Les actualités vous sont apportées de AI News
       </h2>
       <ErrorBoundary fallback={<AiNewsError />}>
