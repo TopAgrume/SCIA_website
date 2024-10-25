@@ -5,6 +5,7 @@ import { type Project } from '@/lib/types';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import Card from '@/components/Card';
 
 function Integrations() {
   return (
@@ -20,7 +21,7 @@ type PresentationCardProps = {
 
 function PresentationCard({ project }: PresentationCardProps) {
   return (
-    <div className='flex bg-secondary mt-5 p-5 border border-black rounded-sm'>
+    <Card className='flex mt-5'>
       <div className={`w-${project.photo != null ? '2/3' : 'full'}`}>
         <div className='flex'>
           <h2 className='font-bold text-xl'>{project.name}</h2>
@@ -59,7 +60,7 @@ function PresentationCard({ project }: PresentationCardProps) {
           />
         </div>
       ) : null}
-    </div>
+    </Card>
   );
 }
 

@@ -5,8 +5,9 @@ import Loading from '@/components/Loading';
 import { type Event } from '@/lib/types';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ExternalLinkIcon, GearIcon } from '@radix-ui/react-icons';
+import Card from '@/components/Card';
 
 type EventCardProps = {
   event: Event;
@@ -14,18 +15,11 @@ type EventCardProps = {
 };
 
 function EventCard({ event, index: i }: EventCardProps) {
-  const cardRef = useRef<HTMLDivElement>(null);
-
   const [onParticipantsList, setOnParticipantsList] = useState<boolean>(false);
   const [attending, setAttending] = useState<boolean>(event.attending);
 
   return (
-    <div
-      ref={cardRef}
-      className={`bg-secondary border rounded-sm border-black block p-5 mt-5 ${
-        i % 2 == 0 ? '' : 'ml-auto'
-      } w-8/12`}
-    >
+    <Card className={`block mt-5 ${i % 2 == 0 ? '' : 'ml-auto'} w-8/12`}>
       <div className='flex'>
         <h1 className='mt-auto mr-4 mb-auto font-bold text-2xl'>
           {event.name}
@@ -87,7 +81,7 @@ function EventCard({ event, index: i }: EventCardProps) {
           </div>
         )}
       </div>
-    </div>
+    </Card>
   );
 }
 

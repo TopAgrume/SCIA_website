@@ -1,13 +1,14 @@
+import Card from '@/components/Card';
 import { type Suggestion } from '@/lib/types';
 import Image from 'next/image';
 import Link from 'next/link';
 
 function AddSuggestion() {
   return (
-    <div className='w-screen flex items-center justify-center'>
-      <div className='ml-auto mr-auto flex'>
+    <div className='flex justify-center items-center w-screen'>
+      <div className='flex mr-auto ml-auto'>
         <p className='p-2 font-bold'>{'-> ->'}</p>
-        <button className='p-2 rounded-sm hover:bg-gray-300 font-bold'>
+        <button className='hover:bg-gray-300 p-2 rounded-sm font-bold'>
           Ajouter une suggestion
         </button>
         <p className='p-2 font-bold'>{'<- <-'}</p>
@@ -23,14 +24,11 @@ type SuggestionProps = {
 
 function SuggestionCard({ indice, suggestion }: SuggestionProps) {
   return (
-    <div
-      style={{
-        gridArea: `${Math.floor((indice + 1) / 3)} ${(indice % 3) + 1} ${Math.floor((indice + 1) / 3) + 1} ${(indice % 3) + 2}`,
-      }}
-      className='bg-secondary border rounded-sm border-black block p-5'
+    <Card
+      className={`block grid-area-[${Math.floor((indice + 1) / 3)}_${(indice % 3) + 1}_${Math.floor((indice + 1) / 3) + 1}_${(indice % 3) + 2}]`}
     >
       <div className='flex'>
-        <h1 className='text-lg font-bold'>{suggestion.name}</h1>
+        <h1 className='font-bold text-lg'>{suggestion.name}</h1>
         {suggestion.isAuthor ? (
           <button className='ml-4 hover:scale-110 duration-300'>
             <Image
@@ -69,9 +67,9 @@ function SuggestionCard({ indice, suggestion }: SuggestionProps) {
         </div>
       )}
       <p className='mt-3'>{suggestion.summary}</p>
-      <p className='text-sm mt-5'>{`par ${suggestion.by}`}</p>
+      <p className='mt-5 text-sm'>{`par ${suggestion.by}`}</p>
       <p className='mt-1 text-xs'>{`posté le ${suggestion.date.toLocaleString().split(',')[0]}`}</p>
-    </div>
+    </Card>
   );
 }
 

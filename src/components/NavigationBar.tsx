@@ -1,97 +1,93 @@
 'use client';
-// eslint-disable-next-line camelcase
-import { Jersey_25 } from 'next/font/google';
-import Image from 'next/image';
+
+import { useState } from 'react';
+import { Bell, Calendar, Folder, Home, Moon, Sun, User } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import Image from 'next/image';
 
-const jersey = Jersey_25({
-  weight: ['400'],
-  subsets: ['latin'],
-});
+function NavItem({
+  icon,
+  label,
+  href,
+  isActive = false,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  href: string;
+  isActive?: boolean;
+}) {
+  return (
+    <Link
+      href={href}
+      className={`flex items-center space-x-2 px-3 py-2 rounded-md transition ${
+        isActive
+          ? 'bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-gray-200'
+          : 'hover:bg-gray-300 dark:hover:bg-gray-600'
+      }`}
+    >
+      {icon}
+      <span>{label}</span>
+    </Link>
+  );
+}
 
 export default function NavigationBar() {
   const pathname = usePathname();
-
-  const buttonClasses =
-    'mt-auto mb-auto ml-2 mr-2 w-32 h-8 border flex justify-center items-center rounded-sm transition-all duration-300 bg-taskbar_button hover:bg-taskbar_button_hover';
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   return (
-    <div className='top-0 z-50 sticky'>
-      <div className={`w-full h-10 flex ${jersey.className} bg-taskbar_main`}>
-        <div className='flex m-1 ml-4'>
+    <header className='top-0 z-50 sticky bg-gray-200 dark:bg-gray-700 shadow'>
+      <div className='flex justify-between items-center mx-auto px-4 py-4 container'>
+        <div className='flex items-center'>
           <Image src='/logo.png' alt='logo' width={34} height={40} />
+          <h1 className='ml-2 font-bold text-2xl'>SCIA</h1>
         </div>
-        <Link
-          href='/home'
-          className={
-            buttonClasses +
-            ` ml-4 ${pathname === '/home' ? 'border-black' : 'border-taskbar_border'}`
-          }
-        >
-          <span className='font-black text-navbar align-middle'>Accueil</span>
-        </Link>
-
-        <Link
-          href='/events'
-          className={
-            buttonClasses +
-            (pathname === '/events'
-              ? ' border-black'
-              : '  border-taskbar_border')
-          }
-        >
-          <span className='font-black text-navbar transform-none align-middle'>
-            Evenements
-          </span>
-        </Link>
-
-        <Link
-          href='/projects'
-          className={
-            buttonClasses +
-            (pathname === '/projects'
-              ? ' border-black'
-              : ' border-taskbar_border')
-          }
-        >
-          <span className='font-black text-navbar align-middle'>Projets</span>
-        </Link>
-
-        <Link
-          href='/suggestions'
-          className={
-            buttonClasses +
-            (pathname === '/suggestions'
-              ? ' border-black'
-              : ' border-taskbar_border')
-          }
-        >
-          <span className='font-black text-navbar align-middle'>
-            Suggestions
-          </span>
-        </Link>
-
-        <div className='flex ml-auto'>
-          <button className='hover:bg-taskbar_button_hover mt-1 mb-1 pr-1 pl-1 rounded-full duration-500'>
-            <Image
-              src='/moon.png'
-              alt='light/dark mode'
-              width={28}
-              height={28}
-            />
-          </button>
-
+        <nav className='md:flex space-x-2 hidden'>
+          <NavItem
+            icon={<Home className='w-4 h-4' />}
+            label='Accueil'
+            href='/home'
+            isActive={pathname === '/home'}
+          />
+          <NavItem
+            icon={<Calendar className='w-4 h-4' />}
+            label='Evenements'
+            href='/events'
+            isActive={pathname === '/events'}
+          />
+          <NavItem
+            icon={<Folder className='w-4 h-4' />}
+            label='Projets'
+            href='/projects'
+            isActive={pathname === '/projects'}
+          />
+          <NavItem
+            icon={<Bell className='w-4 h-4' />}
+            label='Suggestions'
+            href='/suggestions'
+            isActive={pathname === '/suggestions'}
+          />
+        </nav>
+        <div className='flex items-center space-x-4'>
           <button
-            className={buttonClasses + ' ml-4 mr-6 w-56 border-taskbar_border'}
+            onClick={() => setIsDarkMode(!isDarkMode)}
+            className='bg-gray-300 dark:bg-gray-600 p-2 rounded-full'
+            aria-label='Toggle dark mode'
           >
-            <span className='font-black text-navbar align-middle'>
-              mael.reynaud
-            </span>
+            {isDarkMode ? (
+              <Sun className='w-5 h-5' />
+            ) : (
+              <Moon className='w-5 h-5' />
+            )}
           </button>
+          <div className='flex items-center space-x-2'>
+            <User className='w-5 h-5' />
+            <span className='md:inline hidden'>mael.reynaud</span>
+          </div>
         </div>
       </div>
       <div className='bg-black w-full h-0.5' />
-    </div>
+    </header>
   );
 }
