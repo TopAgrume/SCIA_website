@@ -223,7 +223,15 @@ function AiNews() {
         Actualités IA
       </h2>
       <h2 className='mb-4 font-bold text-gray-500 dark:text-gray-400'>
-        Les actualités vous sont apportées de AI News
+        Les actualités proviennent de{' '}
+        <a
+          href='https://www.artificialintelligence-news.com/'
+          target='_blank'
+          rel='noopener noreferrer'
+          className='text-blue-500 dark:text-blue-400'
+        >
+          AI News
+        </a>
       </h2>
       <ErrorBoundary fallback={<AiNewsError />}>
         <Suspense fallback={<AiNewsLoading />}>
