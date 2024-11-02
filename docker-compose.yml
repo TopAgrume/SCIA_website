@@ -8,12 +8,17 @@ services:
     ports:
       - '${DB_EXPOSED_PORT-5432}:5432'
     environment:
+      POSTGRES_USER: ${DB_USER:-backend}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
+      POSTGRES_DB: ${DB_NAME:-postgres}
     volumes:
       - postgres:/var/lib/postgresql/data
-      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U ${DB_USER:-backend_user}']
+      test:
+        [
+          'CMD-SHELL',
+          'sh -c "pg_isready -U ${DB_USER:-backend} -d ${DB_NAME:-postgres}"',
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -21,8 +26,10 @@ services:
 
   migrator:
     build: .
+    volumes:
+      - ./prisma:/app
     environment:
-      DATABASE_URL: 'postgresql://${DB_USER:-backend_user}:${DB_PASSWORD:-password}@db:5432/${DB_NAME:-backend}'
+      DATABASE_URL: 'postgresql://${DB_USER:-backend}:${DB_PASSWORD:-password}@db:5432/${DB_NAME:-backend}'
     depends_on:
       db:
         condition: service_healthy
