@@ -107,7 +107,17 @@ export default function Events() {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    setLoading(false);
+    const fetchData = async () => {
+      const data = await fetch('/api/hello');
+      const json = await data.json();
+      console.log(json);
+    };
+
+    fetchData()
+      .then(() => {
+        setLoading(false);
+      })
+      .catch(console.error);
   }, []);
 
   const events: Array<Event> = [];
