@@ -1,8 +1,8 @@
 -- CreateEnum
-CREATE TYPE "ArticleType" AS ENUM ('ARTICLE', 'VIDEO');
+CREATE TYPE "article_type" AS ENUM ('ARTICLE', 'VIDEO');
 
 -- CreateTable
-CREATE TABLE "Event" (
+CREATE TABLE "event" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "about" TEXT NOT NULL,
@@ -15,11 +15,11 @@ CREATE TABLE "Event" (
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "Event_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "event_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "Project" (
+CREATE TABLE "project" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "about" TEXT NOT NULL,
@@ -29,25 +29,25 @@ CREATE TABLE "Project" (
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "Project_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "project_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "Suggestion" (
+CREATE TABLE "suggestion" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "summary" TEXT NOT NULL,
     "link" TEXT NOT NULL,
-    "type" "ArticleType" NOT NULL,
+    "type" "article_type" NOT NULL,
     "created_by" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "Suggestion_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "suggestion_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "EventAttending" (
+CREATE TABLE "event_attending" (
     "id" TEXT NOT NULL,
     "event_id" TEXT NOT NULL,
     "user_name" TEXT NOT NULL,
@@ -55,8 +55,8 @@ CREATE TABLE "EventAttending" (
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "EventAttending_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "event_attending_pkey" PRIMARY KEY ("id")
 );
 
 -- AddForeignKey
-ALTER TABLE "EventAttending" ADD CONSTRAINT "EventAttending_event_id_fkey" FOREIGN KEY ("event_id") REFERENCES "Event"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "event_attending" ADD CONSTRAINT "event_attending_event_id_fkey" FOREIGN KEY ("event_id") REFERENCES "event"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

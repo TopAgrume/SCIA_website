@@ -22,6 +22,8 @@ model Event {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   attending EventAttending[]
+
+  @@map("event")
 }
 
 model Project {
@@ -34,6 +36,8 @@ model Project {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   // photo
+
+  @@map("project")
 }
 
 model Suggestion {
@@ -45,6 +49,8 @@ model Suggestion {
   created_by String // TODO : FOREIGN KEY ON USER
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+
+  @@map("suggestion")
 }
 
 model EventAttending {
@@ -55,9 +61,13 @@ model EventAttending {
   is_attending Boolean @default(true)
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+
+  @@map("event_attending")
 }
 
 enum ArticleType {
   ARTICLE
   VIDEO
+
+  @@map("article_type")
 }
