@@ -7,14 +7,9 @@ type Event = {
   endDate: Date | null;
   by: string;
   attending: boolean;
-  participants: Array<string>;
+  participants: Array<string> | never[];
   isAuthor: boolean;
 };
-
-// type User = {
-//   login: string;
-//   mail: string;
-// };
 
 type Project = {
   name: string;

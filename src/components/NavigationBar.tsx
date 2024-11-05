@@ -20,7 +20,13 @@ export default function NavigationBar() {
     <div className='top-0 z-50 sticky'>
       <div className={`w-full h-10 flex ${jersey.className} bg-taskbar_main`}>
         <div className='flex m-1 ml-4'>
-          <Image src='/logo.png' alt='logo' width={34} height={40} />
+          <Image
+            src='/logo.png'
+            alt='logo'
+            width={34}
+            height={40}
+            style={{ width: 'auto', height: '100%' }}
+          />
         </div>
         <Link
           href='/home'
