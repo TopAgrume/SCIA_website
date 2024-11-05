@@ -10,7 +10,7 @@ datasource db {
 }
 
 model Event {
-  id String @id @default(uuid())
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name String
   about String
   link String
@@ -20,47 +20,47 @@ model Event {
   end_date DateTime
   created_by String // TODO : FOREIGN KEY ON USER
   created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  updated_at DateTime @default(now()) @updatedAt
   attending EventAttending[]
 
   @@map("event")
 }
 
 model Project {
-  id String @id @default(uuid())
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name String 
   about String
   link String
   by String
   created_by String // TODO : FOREIGN KEY ON USER
   created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  updated_at DateTime @default(now()) @updatedAt
   // photo
 
   @@map("project")
 }
 
 model Suggestion {
-  id String @id @default(uuid())
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name String
   summary String
   link String
   type ArticleType
   created_by String // TODO : FOREIGN KEY ON USER
   created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  updated_at DateTime @default(now()) @updatedAt
 
   @@map("suggestion")
 }
 
 model EventAttending {
-  id String @id @default(uuid())
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   event Event @relation(fields: [event_id], references: [id])
-  event_id String
+  event_id String @db.Uuid
   user_name String
   is_attending Boolean @default(true)
   created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  updated_at DateTime @default(now()) @updatedAt
 
   @@map("event_attending")
 }

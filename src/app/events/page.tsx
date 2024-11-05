@@ -113,9 +113,11 @@ export default function Events() {
       console.log(json);
     };
 
-    fetchData().catch(console.error);
-
-    setLoading(false);
+    fetchData()
+      .then(() => {
+        setLoading(false);
+      })
+      .catch(console.error);
   }, []);
 
   const events: Array<Event> = [];
