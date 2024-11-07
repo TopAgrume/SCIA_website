@@ -8,19 +8,21 @@ export default async function handler(
 ) {
   try {
     if (req.method !== 'DELETE')
-      return res.status(HttpStatus.METHOD_NOT_ALLOWED);
+      return res.status(HttpStatus.METHOD_NOT_ALLOWED).end();
 
-    // need some kind of authentification
-    // check that req.sender == event.created_by
+    // TODO : authentification
+    // TODO : check that req.sender == event.created_by
+
+    const name = req.body['name'];
 
     const event = await prisma.event.findFirst({
       where: {
-        name: 'Tech Expo 2024',
+        name: name,
       },
     });
 
     if (event == null || event == undefined) {
-      return res.status(HttpStatus.BAD_REQUEST);
+      return res.status(HttpStatus.BAD_REQUEST).end();
     }
 
     await prisma.event.delete({
@@ -29,9 +31,9 @@ export default async function handler(
       },
     });
 
-    return res.status(HttpStatus.OK);
+    return res.status(HttpStatus.OK).end();
   } catch (error) {
     console.error(error);
-    return res.status(HttpStatus.INTERNAL_SERVER_ERROR);
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).end();
   }
 }

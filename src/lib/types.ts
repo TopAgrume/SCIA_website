@@ -4,7 +4,7 @@ type Event = {
   place: string;
   about: string;
   startDate: Date;
-  endDate: Date | null;
+  endDate: Date;
   by: string;
   attending: boolean;
   participants: Array<string> | never[];

@@ -8,9 +8,10 @@ export default async function handler(
   res: NextApiResponse,
 ) {
   try {
-    if (req.method !== 'GET') return res.status(HttpStatus.METHOD_NOT_ALLOWED);
+    if (req.method !== 'GET')
+      return res.status(HttpStatus.METHOD_NOT_ALLOWED).end();
 
-    // need some kind of authentification
+    // TODO : authentification
 
     const events = await prisma.event.findMany({
       orderBy: [
@@ -28,15 +29,15 @@ export default async function handler(
         startDate: event.start_date,
         endDate: event.end_date,
         by: event.by,
-        attending: false, // check event_attending with req.sender
-        participants: [], // join on event_attending
-        isAuthor: false, // req.sender == event.created_by
+        attending: false, // TODO : check event_attending with req.sender
+        participants: [], // TODO : join on event_attending
+        isAuthor: false, // TODO : check that req.sender == event.created_by
       } as Event;
     });
 
     return res.status(HttpStatus.OK).json(eventsMapped);
   } catch (error) {
     console.error(error);
-    return res.status(HttpStatus.INTERNAL_SERVER_ERROR);
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).end();
   }
 }

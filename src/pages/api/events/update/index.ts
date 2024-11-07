@@ -6,14 +6,15 @@ export default async function handler(
   res: NextApiResponse,
 ) {
   try {
-    if (req.method !== 'PUT') return res.status(HttpStatus.METHOD_NOT_ALLOWED);
+    if (req.method !== 'PUT')
+      return res.status(HttpStatus.METHOD_NOT_ALLOWED).end();
 
-    // need some kind of authentification
-    // check that req.sender == event.created_by
+    // TODO : authentification
+    // TODO : req.sender == event.created_by
 
-    return res.status(HttpStatus.OK);
+    return res.status(HttpStatus.OK).end();
   } catch (error) {
     console.error(error);
-    return res.status(HttpStatus.INTERNAL_SERVER_ERROR);
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).end();
   }
 }

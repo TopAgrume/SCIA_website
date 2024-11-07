@@ -46,7 +46,7 @@ function EventCard({ event, index: i }: EventCardProps) {
       </div>
       <h2 className='text-lg'>{event.place}</h2>
       <h3 className='mb-4 text-sm'>
-        {event.endDate == null
+        {event.startDate.getTime() === event.endDate.getTime()
           ? event.startDate.toLocaleString('fr-FR').split(' ')[0]
           : `du ${event.startDate.toLocaleString('fr-FR').split(' ')[0]} au ${
               event.endDate.toLocaleString('fr-FR').split(' ')[0]
@@ -120,10 +120,7 @@ export default function Events() {
           return {
             ...event,
             startDate: new Date(event.startDate),
-            endDate:
-              event.endDate == event.startDate
-                ? null
-                : new Date(event.endDate == null ? '' : event.endDate),
+            endDate: new Date(event.endDate),
           } as Event;
         }),
       );
