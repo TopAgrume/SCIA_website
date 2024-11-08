@@ -20,20 +20,31 @@ export default async function handler(
         },
       ],
     });
-    const eventsMapped = events.map(event => {
-      return {
-        name: event.name,
-        link: event.link,
-        place: event.place,
-        about: event.about,
-        startDate: event.start_date,
-        endDate: event.end_date,
-        by: event.by,
-        attending: false, // TODO : check event_attending with req.sender
-        participants: [], // TODO : join on event_attending
-        isAuthor: false, // TODO : check that req.sender == event.created_by
-      } as Event;
-    });
+    const eventsMapped = await Promise.all(
+      events.map(async event => {
+        const participants = await prisma.eventAttending.findMany({
+          where: { event_id: event.id }, // eslint-disable-line
+        });
+        const participantsOnlyNames = participants
+          ? participants
+              .filter(participant => participant.is_attending)
+              .map(participant => participant.user_name)
+          : [];
+
+        return {
+          name: event.name,
+          link: event.link,
+          place: event.place,
+          about: event.about,
+          startDate: event.start_date,
+          endDate: event.end_date,
+          by: event.by,
+          attending: false, // TODO : check event_attending with req.sender
+          participants: participantsOnlyNames,
+          isAuthor: false, // TODO : check that req.sender == event.created_by
+        } as Event;
+      }),
+    );
 
     return res.status(HttpStatus.OK).json(eventsMapped);
   } catch (error) {

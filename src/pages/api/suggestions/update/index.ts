@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
 import HttpStatus from '@/lib/status';
-import { type Event } from '@/lib/types';
+import { type Suggestion } from '@/lib/types';
 
 export default async function handler(
   req: NextApiRequest,
@@ -12,18 +12,14 @@ export default async function handler(
       return res.status(HttpStatus.METHOD_NOT_ALLOWED).end();
 
     // TODO : authentification
-    // TODO : req.sender == event.created_by
+    // TODO : req.sender == suggestion.created_by
 
-    const event = {
-      ...req.body,
-      startDate: new Date(req.body['startDate']),
-      endDate: new Date(req.body['endDate']),
-    } as Event;
+    const suggestion = req.body as Suggestion;
 
     const id = (
-      await prisma.event.findFirst({
+      await prisma.suggestion.findFirst({
         where: {
-          name: event.name,
+          name: suggestion.name,
         },
       })
     )?.id;
@@ -31,26 +27,20 @@ export default async function handler(
     if (
       id == null ||
       id == undefined ||
-      event.link === '' ||
-      event.place === '' ||
-      event.about === '' ||
-      event.by === '' ||
-      event.startDate.toString() === 'Invalid Date' ||
-      event.endDate.toString() === 'Invalid Date'
+      (suggestion.type !== 'ARTICLE' && suggestion.type !== 'VIDEO') ||
+      suggestion.link === '' ||
+      suggestion.summary === ''
     )
       return res.status(HttpStatus.BAD_REQUEST).end();
 
-    await prisma.event.update({
+    await prisma.suggestion.update({
       where: {
         id: id,
       },
       data: {
-        about: event.about,
-        link: event.link,
-        by: event.by,
-        place: event.place,
-        start_date: event.startDate, // eslint-disable-line
-        end_date: event.endDate, // eslint-disable-line
+        link: suggestion.link,
+        summary: suggestion.summary,
+        type: suggestion.type,
       },
     });
 

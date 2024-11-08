@@ -12,14 +12,9 @@ export default async function handler(
       return res.status(HttpStatus.METHOD_NOT_ALLOWED).end();
 
     // TODO : authentification
-    // TODO : req.sender == event.created_by
+    // TODO : req.sender == project.created_by
 
-    const project = {
-      ...req.body,
-      photo: null,
-      date: new Date(),
-      isAuthor: false,
-    } as Project;
+    const project = req.body as Project;
 
     const id = (
       await prisma.project.findFirst({
@@ -32,7 +27,6 @@ export default async function handler(
     if (
       id == null ||
       id == undefined ||
-      project.name === '' ||
       project.link === '' ||
       project.about === '' ||
       project.by === ''

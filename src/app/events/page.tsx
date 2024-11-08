@@ -63,7 +63,7 @@ function EventCard({ event, index: i }: EventCardProps) {
             // while updating in DB, loading button
           }}
         >
-          {!attending ? "😊 J'y serai !" : "Je n'y serai pas 😞"}
+          {!attending ? "😊 J'y serai !" : "Je n'y serai finalement pas 😞"}
         </button>
 
         <p

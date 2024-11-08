@@ -16,9 +16,6 @@ export default async function handler(
       ...req.body,
       startDate: new Date(req.body['startDate']),
       endDate: new Date(req.body['endDate']),
-      attending: false,
-      participants: [],
-      isAuthor: false,
     } as Event;
 
     if (
@@ -40,7 +37,7 @@ export default async function handler(
     if (existing)
       return res
         .status(HttpStatus.BAD_REQUEST)
-        .json({ message: 'Event with same name already exist' });
+        .json({ message: 'Event with same name already exists' });
 
     // TODO : change created_by by current_user
     await prisma.event.create({

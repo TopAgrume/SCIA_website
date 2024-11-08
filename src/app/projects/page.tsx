@@ -85,24 +85,30 @@ function Presentations({ presentations }: PresentationsProps) {
 
 export default function Projects() {
   const [loading, setLoading] = useState<boolean>(true);
-
-  const projects: Array<Project> = [];
-  for (const i of [1, 2, 3, 4, 5]) {
-    projects.push({
-      name: 'Jax Transformer',
-      about:
-        "Ce projet est l'implémentation d'un transformer, decoder-only, en vanilla jax. Il permet de générer des petites histoires.",
-      link: 'https://github.com/DjDonPablo/jax-transformer',
-      by: 'Maël Reynaud',
-      photo: '/transformer.png',
-      date: new Date(2024, 9, 21),
-      isAuthor: i % 2 == 0,
-    } as Project);
-  }
+  const [projects, setProjects] = useState<Array<Project>>([]);
 
   useEffect(() => {
-    setLoading(false);
+    const fetchData = async () => {
+      const data = await fetch('/api/projects');
+      const json = (await data.json()) as Array<Project>;
+      setProjects(
+        json.map(project => {
+          return {
+            ...project,
+            photo: '/transformer.png',
+            date: new Date(project.date),
+          } as Project;
+        }),
+      );
+    };
+
+    fetchData()
+      .then(() => {
+        setLoading(false);
+      })
+      .catch(console.error);
   }, []);
+
   return (
     <div className='flex h-[calc(100vh-42px)]'>
       {loading ? (

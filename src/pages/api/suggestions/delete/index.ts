@@ -11,23 +11,23 @@ export default async function handler(
       return res.status(HttpStatus.METHOD_NOT_ALLOWED).end();
 
     // TODO : authentification
-    // TODO : check that req.sender == project.created_by
+    // TODO : check that req.sender == suggestion.created_by
 
     const name = req.body['name'];
 
-    const project = await prisma.project.findFirst({
+    const suggestion = await prisma.suggestion.findFirst({
       where: {
         name: name,
       },
     });
 
-    if (project == null || project == undefined) {
+    if (suggestion == null || suggestion == undefined) {
       return res.status(HttpStatus.BAD_REQUEST).end();
     }
 
-    await prisma.project.delete({
+    await prisma.suggestion.delete({
       where: {
-        id: project.id,
+        id: suggestion.id,
       },
     });
 

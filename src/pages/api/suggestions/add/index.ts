@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
-import { type Project } from '@/lib/types';
+import { type Suggestion } from '@/lib/types';
 import HttpStatus from '@/lib/status';
 
 export default async function handler(
@@ -13,33 +13,33 @@ export default async function handler(
 
     // TODO : authentification
 
-    const project = req.body as Project;
+    const suggestion = req.body as Suggestion;
 
     if (
-      project.name === '' ||
-      project.link === '' ||
-      project.about === '' ||
-      project.by === ''
+      (suggestion.type !== 'ARTICLE' && suggestion.type !== 'VIDEO') ||
+      suggestion.name === '' ||
+      suggestion.link === '' ||
+      suggestion.summary === ''
     )
       return res.status(HttpStatus.BAD_REQUEST).end();
 
-    const existing = await prisma.project.findFirst({
+    const existing = await prisma.suggestion.findFirst({
       where: {
-        name: project.name,
+        name: suggestion.name,
       },
     });
     if (existing)
       return res
         .status(HttpStatus.BAD_REQUEST)
-        .json({ message: 'Project with same name already exists' });
+        .json({ message: 'Suggestion with same name already exists' });
 
     // TODO : change created_by by current_user
-    await prisma.project.create({
+    await prisma.suggestion.create({
       data: {
-        name: project.name,
-        link: project.link,
-        about: project.about,
-        by: project.by,
+        name: suggestion.name,
+        link: suggestion.link,
+        summary: suggestion.summary,
+        type: suggestion.type,
         created_by: 'JOHN DOE', // eslint-disable-line
       },
     });
