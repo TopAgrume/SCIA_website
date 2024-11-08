@@ -32,6 +32,16 @@ export default async function handler(
     )
       return res.status(HttpStatus.BAD_REQUEST).end();
 
+    const existing = await prisma.event.findFirst({
+      where: {
+        name: event.name,
+      },
+    });
+    if (existing)
+      return res
+        .status(HttpStatus.BAD_REQUEST)
+        .json({ message: 'Event with same name already exist' });
+
     // TODO : change created_by by current_user
     await prisma.event.create({
       data: {

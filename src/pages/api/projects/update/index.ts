@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
 import HttpStatus from '@/lib/status';
-import { type Event } from '@/lib/types';
+import { type Project } from '@/lib/types';
 
 export default async function handler(
   req: NextApiRequest,
@@ -14,19 +14,17 @@ export default async function handler(
     // TODO : authentification
     // TODO : req.sender == event.created_by
 
-    const event = {
+    const project = {
       ...req.body,
-      startDate: new Date(req.body['startDate']),
-      endDate: new Date(req.body['endDate']),
-      attending: false,
-      participants: [],
+      photo: null,
+      date: new Date(),
       isAuthor: false,
-    } as Event;
+    } as Project;
 
     const id = (
-      await prisma.event.findFirst({
+      await prisma.project.findFirst({
         where: {
-          name: event.name,
+          name: project.name,
         },
       })
     )?.id;
@@ -34,27 +32,21 @@ export default async function handler(
     if (
       id == null ||
       id == undefined ||
-      event.name === '' ||
-      event.link === '' ||
-      event.place === '' ||
-      event.about === '' ||
-      event.by === '' ||
-      event.startDate.toString() === 'Invalid Date' ||
-      event.endDate.toString() === 'Invalid Date'
+      project.name === '' ||
+      project.link === '' ||
+      project.about === '' ||
+      project.by === ''
     )
       return res.status(HttpStatus.BAD_REQUEST).end();
 
-    await prisma.event.update({
+    await prisma.project.update({
       where: {
         id: id,
       },
       data: {
-        about: event.about,
-        link: event.link,
-        by: event.by,
-        place: event.place,
-        start_date: event.startDate, // eslint-disable-line
-        end_date: event.endDate, // eslint-disable-line
+        about: project.about,
+        link: project.link,
+        by: project.by,
       },
     });
 
