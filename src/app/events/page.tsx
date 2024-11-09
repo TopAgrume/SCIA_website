@@ -6,7 +6,7 @@ import { type Event } from '@/lib/types';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
-import { ExternalLinkIcon, GearIcon } from '@radix-ui/react-icons';
+import { ExternalLinkIcon, GearIcon, SymbolIcon } from '@radix-ui/react-icons';
 
 type EventCardProps = {
   event: Event;
@@ -18,6 +18,7 @@ function EventCard({ event, index: i }: EventCardProps) {
 
   const [onParticipantsList, setOnParticipantsList] = useState<boolean>(false);
   const [attending, setAttending] = useState<boolean>(event.attending);
+  const [attendingLoading, setAttendingLoading] = useState<boolean>(false);
 
   return (
     <div
@@ -58,12 +59,31 @@ function EventCard({ event, index: i }: EventCardProps) {
       <div className='relative flex'>
         <button
           className='bg-taskbar_button hover:bg-taskbar_button_hover mr-4 p-2 border border-black rounded-md font-bold text-xs'
-          onClick={() => {
-            setAttending(!attending);
-            // while updating in DB, loading button
+          onClick={async () => {
+            setAttendingLoading(true);
+
+            const data = await fetch('/api/events/attend', {
+              method: 'POST',
+              body: JSON.stringify({ name: event.name }),
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            });
+            if (data.status === 200) {
+              setAttending(!attending);
+            } else {
+              console.error(`Fetch returned ${data.status}`);
+            }
+            setAttendingLoading(false);
           }}
         >
-          {!attending ? "😊 J'y serai !" : "Je n'y serai finalement pas 😞"}
+          {attendingLoading ? (
+            <SymbolIcon className='animate-spin' />
+          ) : !attending ? (
+            "😊 J'y serai !"
+          ) : (
+            "Je n'y serai finalement pas 😞"
+          )}
         </button>
 
         <p
@@ -114,6 +134,10 @@ export default function Events() {
   useEffect(() => {
     const fetchData = async () => {
       const data = await fetch('/api/events');
+      if (data.status !== 200) {
+        console.error(`Fetch returned ${data.status}`);
+        return;
+      }
       const json = (await data.json()) as Array<Event>;
       setEvents(
         json.map(event => {

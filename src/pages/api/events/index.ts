@@ -12,6 +12,7 @@ export default async function handler(
       return res.status(HttpStatus.METHOD_NOT_ALLOWED).end();
 
     // TODO : authentification
+    const reqSender = 'JOHNDOE';
 
     const events = await prisma.event.findMany({
       orderBy: [
@@ -31,6 +32,10 @@ export default async function handler(
               .map(participant => participant.user_name)
           : [];
 
+        const eventAttending = await prisma.eventAttending.findFirst({
+          where: { event_id: event.id, user_name: reqSender }, // eslint-disable-line
+        });
+
         return {
           name: event.name,
           link: event.link,
@@ -39,9 +44,9 @@ export default async function handler(
           startDate: event.start_date,
           endDate: event.end_date,
           by: event.by,
-          attending: false, // TODO : check event_attending with req.sender
+          attending: eventAttending ? eventAttending.is_attending : false,
           participants: participantsOnlyNames,
-          isAuthor: false, // TODO : check that req.sender == event.created_by
+          isAuthor: event.created_by === reqSender,
         } as Event;
       }),
     );

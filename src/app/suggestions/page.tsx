@@ -87,6 +87,10 @@ export default function Suggestions() {
   useEffect(() => {
     const fetchData = async () => {
       const data = await fetch('/api/suggestions');
+      if (data.status !== 200) {
+        console.error(`Fetch returned ${data.status}`);
+        return;
+      }
       const json = (await data.json()) as Array<Suggestion>;
       setSuggestions(
         json.map(suggestion => {
