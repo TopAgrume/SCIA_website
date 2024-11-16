@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
 import HttpStatus from '@/lib/status';
 import { type Event } from '@/lib/types';
+import fs from 'fs';
 
 export default async function handler(
   req: NextApiRequest,
@@ -21,6 +22,11 @@ export default async function handler(
         },
       ],
     });
+
+    const images = fs.readdirSync('public/static/images/cats');
+    const sample = (arr: Array<string>) =>
+      arr[Math.floor(Math.random() * arr.length)];
+
     const eventsMapped = await Promise.all(
       events.map(async event => {
         const participants = await prisma.eventAttending.findMany({
@@ -43,6 +49,7 @@ export default async function handler(
           about: event.about,
           startDate: event.start_date,
           endDate: event.end_date,
+          imagePath: sample(images),
           by: event.by,
           attending: eventAttending ? eventAttending.is_attending : false,
           participants: participantsOnlyNames,

@@ -5,6 +5,7 @@ import { type Suggestion } from '@/lib/types';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { GearIcon, ArchiveIcon } from '@radix-ui/react-icons';
 
 function AddSuggestion() {
   return (
@@ -37,28 +38,26 @@ function SuggestionCard({ indice, suggestion }: SuggestionProps) {
         <h1 className='text-lg font-bold'>{suggestion.name}</h1>
         {suggestion.isAuthor ? (
           <button className='ml-4 hover:scale-110 duration-300'>
-            <Image
-              src='/settings.png'
-              alt='settings logo'
-              width={20}
-              height={20}
-            />
+            <GearIcon className='h-5 w-5' />
           </button>
         ) : null}
       </div>
       {suggestion.type === 'ARTICLE' ? (
-        <Link
-          href={suggestion.link}
-          target='_blank'
-          className='text-red-400 text-sm'
-        >
-          {"📰 Lien vers l'article"}
-        </Link>
+        <div className='flex items-center'>
+          <ArchiveIcon className='mr-2' />
+          <Link
+            href={suggestion.link}
+            target='_blank'
+            className='text-red-400 text-sm'
+          >
+            {"Lien vers l'article"}
+          </Link>
+        </div>
       ) : (
         <div className='flex items-center'>
           <Image
             className='mr-2'
-            src='/youtube.png'
+            src='/static/images/youtube.png'
             alt='youtube logo'
             width={16}
             height={16}

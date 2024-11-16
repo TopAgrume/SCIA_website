@@ -26,7 +26,7 @@ export default async function handler(
         link: project.link,
         about: project.about,
         by: project.by,
-        photo: null, // TODO : deal with photo
+        image: null, // TODO : deal with photo
         date: project.created_at,
         isAuthor: false, // TODO : check that req.sender == project.created_by
       } as Project;

@@ -5,6 +5,7 @@ import { type Project } from '@/lib/types';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { GearIcon, GitHubLogoIcon } from '@radix-ui/react-icons';
 
 function Integrations() {
   return (
@@ -21,22 +22,17 @@ type PresentationCardProps = {
 function PresentationCard({ project }: PresentationCardProps) {
   return (
     <div className='flex bg-secondary mt-5 p-5 border border-black rounded-sm'>
-      <div className={`w-${project.photo != null ? '2/3' : 'full'}`}>
+      <div className={`w-${project.image != null ? '2/3' : 'full'}`}>
         <div className='flex'>
           <h2 className='font-bold text-xl'>{project.name}</h2>
           {project.isAuthor ? (
             <button className='ml-2 hover:scale-110 duration-300'>
-              <Image
-                src='/settings.png'
-                alt='event settings'
-                width={18}
-                height={18}
-              />
+              <GearIcon className='h-5 w-5' />
             </button>
           ) : null}
         </div>
         <div className='flex items-center mt-2'>
-          <Image src='/github.png' alt='github logo' height={16} width={16} />
+          <GitHubLogoIcon className='w-4 h-4' />
           <Link
             target='_blank'
             className='ml-2 font-bold text-red-400 text-sm'
@@ -49,12 +45,12 @@ function PresentationCard({ project }: PresentationCardProps) {
         <p className='mt-4 text-sm'>{`par ${project.by}`}</p>
         <p className='mt-1 text-xs'>{`posté le ${project.date.toLocaleString().split(',')[0]}`}</p>
       </div>
-      {project.photo != null ? (
+      {project.image !== '' ? (
         <div className='relative w-1/3'>
           <Image
             fill
             objectFit='cover'
-            src={project.photo}
+            src={`/static/images/projects/${project.image}`}
             alt='project image'
           />
         </div>
@@ -99,7 +95,7 @@ export default function Projects() {
         json.map(project => {
           return {
             ...project,
-            photo: '/transformer.png',
+            image: 'transformer.png',
             date: new Date(project.date),
           } as Project;
         }),

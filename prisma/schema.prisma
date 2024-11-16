@@ -35,7 +35,6 @@ model Project {
   created_by String // TODO : FOREIGN KEY ON USER
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
-  // photo
 
   @@map("project")
 }

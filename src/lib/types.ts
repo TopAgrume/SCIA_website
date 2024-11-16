@@ -5,9 +5,10 @@ type Event = {
   about: string;
   startDate: Date;
   endDate: Date;
+  imagePath: string;
   by: string; // who made the event
   attending: boolean; // if the current user is attending to this event
-  participants: Array<string> | never[];
+  participants: Array<string>;
   isAuthor: boolean; // if the user made the post => he can modify or delete it
 };
 
@@ -16,7 +17,7 @@ type Project = {
   about: string;
   link: string;
   by: string; // who made the project
-  photo: string | null;
+  image: string;
   date: Date;
   isAuthor: boolean; // same as for Event
 };

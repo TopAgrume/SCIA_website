@@ -4,6 +4,7 @@ import { Jersey_25 } from 'next/font/google';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { MoonIcon } from '@radix-ui/react-icons';
 
 const jersey = Jersey_25({
   weight: ['400'],
@@ -21,7 +22,7 @@ export default function NavigationBar() {
       <div className={`w-full h-10 flex ${jersey.className} bg-taskbar_main`}>
         <div className='flex m-1 ml-4'>
           <Image
-            src='/logo.png'
+            src='/static/images/logo.png'
             alt='logo'
             width={34}
             height={40}
@@ -80,12 +81,7 @@ export default function NavigationBar() {
 
         <div className='flex ml-auto'>
           <button className='hover:bg-taskbar_button_hover mt-1 mb-1 pr-1 pl-1 rounded-full duration-500'>
-            <Image
-              src='/moon.png'
-              alt='light/dark mode'
-              width={28}
-              height={28}
-            />
+            <MoonIcon className='w-5 h-5' />
           </button>
 
           <button

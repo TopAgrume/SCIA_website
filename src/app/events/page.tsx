@@ -20,6 +20,32 @@ function EventCard({ event, index: i }: EventCardProps) {
   const [attending, setAttending] = useState<boolean>(event.attending);
   const [attendingLoading, setAttendingLoading] = useState<boolean>(false);
 
+  const attendEvent = async () => {
+    setAttendingLoading(true);
+
+    const data = await fetch('/api/events/attend', {
+      method: 'POST',
+      body: JSON.stringify({ name: event.name }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    if (data.status === 200) {
+      setAttending(!attending);
+      if (!attending)
+        event.participants.push('JOHN DOE'); // TODO: change with username
+      else {
+        const index = event.participants.indexOf('JOHN DOE'); // TODO: change with username
+        if (index > -1) {
+          event.participants.splice(index, 1);
+        }
+      }
+    } else {
+      console.error(`Fetch returned ${data.status}`);
+    }
+    setAttendingLoading(false);
+  };
+
   return (
     <div
       ref={cardRef}
@@ -59,30 +85,14 @@ function EventCard({ event, index: i }: EventCardProps) {
       <div className='relative flex'>
         <button
           className='bg-taskbar_button hover:bg-taskbar_button_hover mr-4 p-2 border border-black rounded-md font-bold text-xs'
-          onClick={async () => {
-            setAttendingLoading(true);
-
-            const data = await fetch('/api/events/attend', {
-              method: 'POST',
-              body: JSON.stringify({ name: event.name }),
-              headers: {
-                'Content-Type': 'application/json',
-              },
-            });
-            if (data.status === 200) {
-              setAttending(!attending);
-            } else {
-              console.error(`Fetch returned ${data.status}`);
-            }
-            setAttendingLoading(false);
-          }}
+          onClick={attendEvent}
         >
           {attendingLoading ? (
             <SymbolIcon className='animate-spin' />
           ) : !attending ? (
             "😊 J'y serai !"
           ) : (
-            "Je n'y serai finalement pas 😞"
+            "Je n'y serai pas 😞"
           )}
         </button>
 
@@ -171,7 +181,7 @@ export default function Events() {
                   <EventCard key={i} event={event} index={i} />
                   <div className={`ml-5 relative w-4/12 mt-5`}>
                     <Image
-                      src={`/cats/${i % 5}.jpg`}
+                      src={`/static/images/cats/${event.imagePath}`}
                       alt='goofy cat'
                       fill
                       sizes='100vh'
@@ -182,7 +192,7 @@ export default function Events() {
                 <>
                   <div className={`mr-5 relative w-4/12 mt-5`}>
                     <Image
-                      src={`/cats/${i % 5}.jpg`}
+                      src={`/static/images/cats/${event.imagePath}`}
                       alt='goofy cat'
                       fill
                       sizes='100vh'
