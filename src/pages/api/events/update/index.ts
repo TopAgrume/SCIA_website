@@ -1,25 +1,36 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
-import { type Event } from '@/lib/types';
 import HttpStatus from '@/lib/status';
+import { type Event } from '@/lib/types';
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
   try {
-    if (req.method !== 'POST')
+    if (req.method !== 'PUT')
       return res.status(HttpStatus.METHOD_NOT_ALLOWED).end();
 
     // TODO : authentification
+    // TODO : req.sender == event.created_by
+
     const event = {
       ...req.body,
       startDate: new Date(req.body['startDate']),
       endDate: new Date(req.body['endDate']),
     } as Event;
 
+    const id = (
+      await prisma.event.findFirst({
+        where: {
+          name: event.name,
+        },
+      })
+    )?.id;
+
     if (
-      event.name === '' ||
+      id == null ||
+      id == undefined ||
       event.link === '' ||
       event.place === '' ||
       event.about === '' ||
@@ -29,27 +40,17 @@ export default async function handler(
     )
       return res.status(HttpStatus.BAD_REQUEST).end();
 
-    const existing = await prisma.event.findFirst({
+    await prisma.event.update({
       where: {
-        name: event.name,
+        id: id,
       },
-    });
-    if (existing)
-      return res
-        .status(HttpStatus.BAD_REQUEST)
-        .json({ message: 'Event with same name already exists' });
-
-    // TODO : change created_by by current_user
-    await prisma.event.create({
       data: {
-        name: event.name,
-        link: event.link,
-        place: event.place,
         about: event.about,
+        link: event.link,
         by: event.by,
+        place: event.place,
         start_date: event.startDate, // eslint-disable-line
         end_date: event.endDate, // eslint-disable-line
-        created_by: 'JOHN DOE', // eslint-disable-line
       },
     });
 

@@ -1,6 +1,6 @@
 type BadgeProps = {
   startDate: Date;
-  endDate: Date | null;
+  endDate: Date;
 };
 
 export default function Badge({ startDate, endDate }: BadgeProps) {
@@ -8,10 +8,10 @@ export default function Badge({ startDate, endDate }: BadgeProps) {
     <div className='bg-blue-200 ml-auto p-2 border border-blue-400 rounded-sm font-bold'>
       A venir ⌛
     </div>
-  ) : (endDate == null &&
+  ) : (endDate.getTime() === startDate.getTime() &&
       new Date().getTime() >= startDate.getTime() &&
       new Date().getTime() <= startDate.getTime() + 86400000) ||
-    (endDate != null &&
+    (endDate.getTime() !== startDate.getTime() &&
       new Date().getTime() <= endDate.getTime() + 86400000) ? (
     <div className='border-green-400 bg-green-200 ml-auto p-2 border rounded-sm font-bold'>
       En cours 😜

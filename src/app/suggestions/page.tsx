@@ -1,6 +1,11 @@
+'use client';
+
+import Loading from '@/components/Loading';
 import { type Suggestion } from '@/lib/types';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { GearIcon, ArchiveIcon } from '@radix-ui/react-icons';
 
 function AddSuggestion() {
   return (
@@ -33,31 +38,30 @@ function SuggestionCard({ indice, suggestion }: SuggestionProps) {
         <h1 className='text-lg font-bold'>{suggestion.name}</h1>
         {suggestion.isAuthor ? (
           <button className='ml-4 hover:scale-110 duration-300'>
-            <Image
-              src='/settings.png'
-              alt='settings logo'
-              width={20}
-              height={20}
-            />
+            <GearIcon className='h-5 w-5' />
           </button>
         ) : null}
       </div>
-      {suggestion.type === 'article' ? (
-        <Link
-          href={suggestion.link}
-          target='_blank'
-          className='text-red-400 text-sm'
-        >
-          {"📰 Lien vers l'article"}
-        </Link>
+      {suggestion.type === 'ARTICLE' ? (
+        <div className='flex items-center'>
+          <ArchiveIcon className='mr-2' />
+          <Link
+            href={suggestion.link}
+            target='_blank'
+            className='text-red-400 text-sm'
+          >
+            {"Lien vers l'article"}
+          </Link>
+        </div>
       ) : (
         <div className='flex items-center'>
           <Image
             className='mr-2'
-            src='/youtube.png'
+            src='/static/images/youtube.png'
             alt='youtube logo'
-            width={20}
-            height={20}
+            width={16}
+            height={16}
+            style={{ width: 'auto', height: '100%' }}
           />
           <Link
             href={suggestion.link}
@@ -76,37 +80,54 @@ function SuggestionCard({ indice, suggestion }: SuggestionProps) {
 }
 
 export default function Suggestions() {
-  const suggestions: Array<Suggestion> = [];
+  const [loading, setLoading] = useState<boolean>(true);
+  const [suggestions, setSuggestions] = useState<Array<Suggestion>>([]);
 
-  for (let i = 0; i < 4; i++) {
-    suggestions.push({
-      name: 'Attention is all you need',
-      type: 'article',
-      by: 'Maël Reynaud',
-      date: new Date(21, 9, 2024),
-      isAuthor: true,
-      link: 'https://arxiv.org/pdf/1706.03762',
-      summary:
-        'Article presenting a new architecture called Transformer which uses attention mechanism.',
-    } as Suggestion);
-  }
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await fetch('/api/suggestions');
+      if (data.status !== 200) {
+        console.error(`Fetch returned ${data.status}`);
+        return;
+      }
+      const json = (await data.json()) as Array<Suggestion>;
+      setSuggestions(
+        json.map(suggestion => {
+          return {
+            ...suggestion,
+            date: new Date(suggestion.date),
+          } as Suggestion;
+        }),
+      );
+    };
+
+    fetchData()
+      .then(() => {
+        setLoading(false);
+      })
+      .catch(console.error);
+  }, []);
 
   return (
     <div className='pt-4'>
-      <AddSuggestion />
-      <div
-        className={`grid grid-cols-3 grid-rows-${Math.ceil(suggestions.length / 4)} gap-6 pad-5 p-5`}
-      >
-        {suggestions.map((suggestion, i) => {
-          return (
-            <SuggestionCard
-              key={`suggestion_${i}`}
-              indice={i}
-              suggestion={suggestion}
-            />
-          );
-        })}
-      </div>
+      {loading ? null : <AddSuggestion />}
+      {loading ? (
+        <Loading />
+      ) : (
+        <div
+          className={`grid grid-cols-3 grid-rows-${Math.ceil(suggestions.length / 4)} gap-6 pad-5 p-5`}
+        >
+          {suggestions.map((suggestion, i) => {
+            return (
+              <SuggestionCard
+                key={`suggestion_${i}`}
+                indice={i}
+                suggestion={suggestion}
+              />
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

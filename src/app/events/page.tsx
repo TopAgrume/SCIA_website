@@ -6,7 +6,7 @@ import { type Event } from '@/lib/types';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
-import { ExternalLinkIcon, GearIcon } from '@radix-ui/react-icons';
+import { ExternalLinkIcon, GearIcon, SymbolIcon } from '@radix-ui/react-icons';
 
 type EventCardProps = {
   event: Event;
@@ -18,6 +18,33 @@ function EventCard({ event, index: i }: EventCardProps) {
 
   const [onParticipantsList, setOnParticipantsList] = useState<boolean>(false);
   const [attending, setAttending] = useState<boolean>(event.attending);
+  const [attendingLoading, setAttendingLoading] = useState<boolean>(false);
+
+  const attendEvent = async () => {
+    setAttendingLoading(true);
+
+    const data = await fetch('/api/events/attend', {
+      method: 'POST',
+      body: JSON.stringify({ name: event.name }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    if (data.status === 200) {
+      setAttending(!attending);
+      if (!attending)
+        event.participants.push('JOHN DOE'); // TODO: change with username
+      else {
+        const index = event.participants.indexOf('JOHN DOE'); // TODO: change with username
+        if (index > -1) {
+          event.participants.splice(index, 1);
+        }
+      }
+    } else {
+      console.error(`Fetch returned ${data.status}`);
+    }
+    setAttendingLoading(false);
+  };
 
   return (
     <div
@@ -46,10 +73,10 @@ function EventCard({ event, index: i }: EventCardProps) {
       </div>
       <h2 className='text-lg'>{event.place}</h2>
       <h3 className='mb-4 text-sm'>
-        {event.endDate == null
-          ? event.startDate.toLocaleString().split(',')[0]
-          : `du ${event.startDate.toLocaleString().split(',')[0]} au ${
-              event.endDate.toLocaleString().split(',')[0]
+        {event.startDate.getTime() === event.endDate.getTime()
+          ? event.startDate.toLocaleString('fr-FR').split(' ')[0]
+          : `du ${event.startDate.toLocaleString('fr-FR').split(' ')[0]} au ${
+              event.endDate.toLocaleString('fr-FR').split(' ')[0]
             }`}
       </h3>
       <p className='mb-4'>{event.about}</p>
@@ -58,12 +85,15 @@ function EventCard({ event, index: i }: EventCardProps) {
       <div className='relative flex'>
         <button
           className='bg-taskbar_button hover:bg-taskbar_button_hover mr-4 p-2 border border-black rounded-md font-bold text-xs'
-          onClick={() => {
-            setAttending(!attending);
-            // while updating in DB, loading button
-          }}
+          onClick={attendEvent}
         >
-          {!attending ? "😊 J'y serai !" : "Je n'y serai pas 😞"}
+          {attendingLoading ? (
+            <SymbolIcon className='animate-spin' />
+          ) : !attending ? (
+            "😊 J'y serai !"
+          ) : (
+            "Je n'y serai pas 😞"
+          )}
         </button>
 
         <p
@@ -79,11 +109,15 @@ function EventCard({ event, index: i }: EventCardProps) {
           <div
             className={`absolute ${!attending ? 'left-36' : 'left-44'} top-full mt-2 w-max border border-yellow-100 bg-yellow-50 text-xs p-2 rounded-sm shadow-lg z-10`}
           >
-            {event.participants.map((participant, i) => (
-              <p key={`participant_${i}`} className='m-2'>
-                {participant}
-              </p>
-            ))}
+            {event.participants.length == 0 ? (
+              <p className='m-2'>Personne pour le moment</p>
+            ) : (
+              event.participants.map((participant, i) => (
+                <p key={`participant_${i}`} className='m-2'>
+                  {participant}
+                </p>
+              ))
+            )}
           </div>
         )}
       </div>
@@ -105,12 +139,25 @@ function AddEvent() {
 
 export default function Events() {
   const [loading, setLoading] = useState<boolean>(true);
+  const [events, setEvents] = useState<Array<Event>>([]);
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await fetch('/api/hello');
-      const json = await data.json();
-      console.log(json);
+      const data = await fetch('/api/events');
+      if (data.status !== 200) {
+        console.error(`Fetch returned ${data.status}`);
+        return;
+      }
+      const json = (await data.json()) as Array<Event>;
+      setEvents(
+        json.map(event => {
+          return {
+            ...event,
+            startDate: new Date(event.startDate),
+            endDate: new Date(event.endDate),
+          } as Event;
+        }),
+      );
     };
 
     fetchData()
@@ -120,31 +167,9 @@ export default function Events() {
       .catch(console.error);
   }, []);
 
-  const events: Array<Event> = [];
-  for (const i of [1, 2, 3, 4, 5]) {
-    events.push({
-      name: 'Développement du site SCIA',
-      link: 'https://github.com/TopAgrume/SCIA_website',
-      place: 'Paris',
-      about:
-        "C'est le développement du site internet de la majeure SCIA pour en faire un endroit accueillant, regroupant plein d'informations, de projets et de connaissances !",
-      startDate: new Date(2024, 9, 23 - i),
-      endDate: null,
-      by: 'Maël Reynaud & Alexandre Devaux-Rivière & Pierre-Louis Favreau',
-      attending: false,
-      participants: [
-        'mael.reynaud',
-        'alexandre.devaux-riviere',
-        'mael.reynaud',
-        'alexandre.devaux-riviere',
-      ],
-      isAuthor: i % 2 == 0,
-    } as unknown as Event);
-  }
-
   return (
     <div className='flex flex-wrap bg-gray-200 p-5'>
-      <AddEvent />
+      {loading ? null : <AddEvent />}
       {loading ? (
         <Loading />
       ) : (
@@ -156,10 +181,10 @@ export default function Events() {
                   <EventCard key={i} event={event} index={i} />
                   <div className={`ml-5 relative w-4/12 mt-5`}>
                     <Image
-                      src={`/cats/${i}.jpg`}
+                      src={`/static/images/cats/${event.imagePath}`}
                       alt='goofy cat'
-                      layout='fill'
-                      objectFit='fill'
+                      fill
+                      sizes='100vh'
                     />
                   </div>
                 </>
@@ -167,10 +192,10 @@ export default function Events() {
                 <>
                   <div className={`mr-5 relative w-4/12 mt-5`}>
                     <Image
-                      src={`/cats/${i}.jpg`}
+                      src={`/static/images/cats/${event.imagePath}`}
                       alt='goofy cat'
-                      layout='fill'
-                      objectFit='fill'
+                      fill
+                      sizes='100vh'
                     />
                   </div>
                   <EventCard key={i} event={event} index={i} />
