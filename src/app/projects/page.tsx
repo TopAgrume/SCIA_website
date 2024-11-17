@@ -12,18 +12,28 @@ import { BentoGrid, BentoGridItem } from '@/components/BentoGrid';
 import Modal from '@/components/Modal';
 import { useForm } from 'react-hook-form';
 
-function AddProjectForm({
-  onClose,
-  onSubmit,
-}: {
+type ProjectFormProps = {
   onClose: () => void;
   onSubmit: (data: Project) => void;
-}) {
+  onDelete?: () => void;
+  initialData?: Project;
+  mode: 'create' | 'edit';
+};
+
+function ProjectForm({
+  onClose,
+  onSubmit,
+  onDelete,
+  initialData,
+  mode,
+}: ProjectFormProps) {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<Project>();
+  } = useForm<Project>({
+    defaultValues: initialData,
+  });
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className='space-y-6'>
@@ -73,61 +83,27 @@ function AddProjectForm({
         )}
       </div>
 
-      {/* TODO: photo upload ? ou en vrai balek trop de galere pour pas grand chose */}
-      {/* <div>
-        <label className='block mb-1 font-medium text-gray-700 text-sm dark:text-gray-300'>
-          Photo du projet (optionnel)
-        </label>
-        <input
-          type='url'
-          {...register('photo')}
-          placeholder='URL de l image'
-          className='border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm px-3 py-2 border focus:border-blue-500 rounded-md focus:ring-blue-500 w-full'
-        />
-      </div> */}
-
       <div className='flex justify-end space-x-3'>
+        {mode === 'edit' && onDelete && (
+          <AnimatedButton
+            variant='danger'
+            onClick={() => {
+              if (confirm('Êtes-vous sûr de vouloir supprimer ce projet ?')) {
+                onDelete();
+              }
+            }}
+          >
+            Supprimer
+          </AnimatedButton>
+        )}
         <AnimatedButton variant='secondary' onClick={onClose}>
           Annuler
         </AnimatedButton>
-        <AnimatedButton variant='primary'>Créer</AnimatedButton>
-      </div>
-    </form>
-  );
-}
-
-function AddProject() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const handleSubmit = (data: Project) => {
-    // API Call to save the project
-    console.log('New project:', data);
-    setIsModalOpen(false);
-  };
-
-  return (
-    <>
-      <div className='flex justify-center mb-8 w-full'>
-        <AnimatedButton
-          icon={<PlusIcon />}
-          size='lg'
-          onClick={() => setIsModalOpen(true)}
-        >
-          Ajouter un projet
+        <AnimatedButton variant='primary'>
+          {mode === 'create' ? 'Créer' : 'Modifier'}
         </AnimatedButton>
       </div>
-
-      <Modal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        title='Nouveau projet'
-      >
-        <AddProjectForm
-          onClose={() => setIsModalOpen(false)}
-          onSubmit={handleSubmit}
-        />
-      </Modal>
-    </>
+    </form>
   );
 }
 
@@ -139,6 +115,23 @@ type PresentationCardProps = {
 function PresentationCard({ project, className = '' }: PresentationCardProps) {
   const { isDarkMode } = useDarkMode();
   const githubIcon = isDarkMode ? '/github_white.png' : '/github_black.png';
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  const handleEdit = (data: Project) => {
+    // Here you would typically make an API call to update the project
+    console.log('Updated project:', {
+      ...data,
+      date: new Date(),
+      isAuthor: true,
+    });
+    setIsEditModalOpen(false);
+  };
+
+  const handleDelete = () => {
+    // Here you would typically make an API call to delete the project
+    console.log('Deleting project:', project);
+    setIsEditModalOpen(false);
+  };
 
   const header = (
     <>
@@ -159,6 +152,7 @@ function PresentationCard({ project, className = '' }: PresentationCardProps) {
                 height={18}
               />
             }
+            onClick={() => setIsEditModalOpen(true)}
           >
             Modifier
           </AnimatedButton>
@@ -169,31 +163,93 @@ function PresentationCard({ project, className = '' }: PresentationCardProps) {
   );
 
   return (
-    <BentoGridItem
-      className={`${className} hover:dark:border-neutral-600 hover:border-neutral-300`}
-      header={header}
-      title={project.name}
-      description={
-        <div className='space-y-3'>
-          <p>{project.about}</p>
-          <div className='flex items-center'>
-            <Image src={githubIcon} alt='github logo' height={16} width={16} />
-            <LinkPreview
-              url={project.link}
-              width={300}
-              height={200}
-              className='ml-2 font-bold text-red-400 text-sm hover:text-red-500 transition-colors duration-200'
-            >
-              Voir le projet
-            </LinkPreview>
+    <>
+      <BentoGridItem
+        className={`${className} hover:dark:border-neutral-600 hover:border-neutral-300`}
+        header={header}
+        title={project.name}
+        description={
+          <div className='space-y-3'>
+            <p>{project.about}</p>
+            <div className='flex items-center'>
+              <Image
+                src={githubIcon}
+                alt='github logo'
+                height={16}
+                width={16}
+              />
+              <LinkPreview
+                url={project.link}
+                width={300}
+                height={200}
+                className='ml-2 font-bold text-red-400 text-sm hover:text-red-500 transition-colors duration-200'
+              >
+                Voir le projet
+              </LinkPreview>
+            </div>
+            <div className='space-y-1'>
+              <p className='text-sm'>{`par ${project.by}`}</p>
+              <p className='text-gray-500 text-xs'>{`posté le ${project.date.toLocaleString().split(',')[0]}`}</p>
+            </div>
           </div>
-          <div className='space-y-1'>
-            <p className='text-sm'>{`par ${project.by}`}</p>
-            <p className='text-gray-500 text-xs'>{`posté le ${project.date.toLocaleString().split(',')[0]}`}</p>
-          </div>
-        </div>
-      }
-    />
+        }
+      />
+
+      <Modal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        title='Modifier le projet'
+      >
+        <ProjectForm
+          mode='edit'
+          onClose={() => setIsEditModalOpen(false)}
+          onSubmit={handleEdit}
+          onDelete={handleDelete}
+          initialData={project}
+        />
+      </Modal>
+    </>
+  );
+}
+
+function AddProject() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleSubmit = (data: Project) => {
+    // Here you would typically make an API call to save the project
+    console.log('New project:', {
+      ...data,
+      date: new Date(),
+      photo: null,
+      isAuthor: true,
+    });
+    setIsModalOpen(false);
+  };
+
+  return (
+    <>
+      <div className='flex justify-center mb-8 w-full'>
+        <AnimatedButton
+          icon={<PlusIcon />}
+          size='lg'
+          onClick={() => setIsModalOpen(true)}
+        >
+          Ajouter un projet
+        </AnimatedButton>
+      </div>
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title='Nouveau projet'
+      >
+        <ProjectForm
+          mode='create'
+          onClose={() => setIsModalOpen(false)}
+          onSubmit={handleSubmit}
+        />
+      </Modal>
+    </>
   );
 }
 

@@ -11,74 +11,28 @@ import Image from 'next/image';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-type SuggestionProps = {
-  indice: number;
-  suggestion: Suggestion;
-};
-
-function SuggestionCard({ indice, suggestion }: SuggestionProps) {
-  return (
-    <Card
-      className={`block grid-area-[${Math.floor((indice + 1) / 3)}_${(indice % 3) + 1}_${Math.floor((indice + 1) / 3) + 1}_${(indice % 3) + 2}]`}
-    >
-      <CardHeader
-        title={suggestion.name}
-        action={
-          suggestion.isAuthor && (
-            <AnimatedButton
-              variant='secondary'
-              size='sm'
-              icon={
-                <Image
-                  src='/settings.png'
-                  alt='settings logo'
-                  width={20}
-                  height={20}
-                />
-              }
-            >
-              Modifier
-            </AnimatedButton>
-          )
-        }
-      />
-
-      <ExternalLink
-        href={suggestion.link}
-        icon={suggestion.type === 'article' ? undefined : '/youtube.png'}
-      >
-        {suggestion.type === 'article'
-          ? "📰 Lien vers l'article"
-          : 'Lien vers la vidéo'}
-      </ExternalLink>
-
-      <p className='mt-3 text-gray-700 dark:text-gray-300'>
-        {suggestion.summary}
-      </p>
-      <div className='space-y-1 mt-5'>
-        <p className='text-gray-600 text-sm dark:text-gray-400'>
-          par {suggestion.by}
-        </p>
-        <p className='text-gray-500 text-xs dark:text-gray-500'>
-          posté le {suggestion.date.toLocaleString().split(',')[0]}
-        </p>
-      </div>
-    </Card>
-  );
-}
-
-function AddSuggestionForm({
-  onClose,
-  onSubmit,
-}: {
+type SuggestionFormProps = {
   onClose: () => void;
   onSubmit: (data: Suggestion) => void;
-}) {
+  onDelete?: () => void;
+  initialData?: Suggestion;
+  mode: 'create' | 'edit';
+};
+
+function SuggestionForm({
+  onClose,
+  onSubmit,
+  onDelete,
+  initialData,
+  mode,
+}: SuggestionFormProps) {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<Suggestion>();
+  } = useForm<Suggestion>({
+    defaultValues: initialData,
+  });
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className='space-y-6'>
@@ -143,12 +97,121 @@ function AddSuggestionForm({
       </div>
 
       <div className='flex justify-end space-x-3'>
+        {mode === 'edit' && onDelete && (
+          <AnimatedButton
+            variant='danger'
+            onClick={() => {
+              if (
+                confirm('Êtes-vous sûr de vouloir supprimer cette suggestion ?')
+              ) {
+                onDelete();
+              }
+            }}
+          >
+            Supprimer
+          </AnimatedButton>
+        )}
         <AnimatedButton variant='secondary' onClick={onClose}>
           Annuler
         </AnimatedButton>
-        <AnimatedButton variant='primary'>Créer</AnimatedButton>
+        <AnimatedButton variant='primary'>
+          {mode === 'create' ? 'Créer' : 'Modifier'}
+        </AnimatedButton>
       </div>
     </form>
+  );
+}
+
+type SuggestionProps = {
+  indice: number;
+  suggestion: Suggestion;
+};
+
+function SuggestionCard({ indice, suggestion }: SuggestionProps) {
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  const handleEdit = (data: Suggestion) => {
+    // Here you would typically make an API call to update the suggestion
+    console.log('Updated suggestion:', {
+      ...data,
+      date: new Date(),
+      isAuthor: true,
+    });
+    setIsEditModalOpen(false);
+  };
+
+  const handleDelete = () => {
+    // Here you would typically make an API call to delete the suggestion
+    console.log('Deleting suggestion:', suggestion);
+    setIsEditModalOpen(false);
+  };
+
+  return (
+    <>
+      <Card
+        className={`block grid-area-[${Math.floor((indice + 1) / 3)}_${
+          (indice % 3) + 1
+        }_${Math.floor((indice + 1) / 3) + 1}_${(indice % 3) + 2}]`}
+      >
+        <CardHeader
+          title={suggestion.name}
+          action={
+            suggestion.isAuthor && (
+              <AnimatedButton
+                variant='secondary'
+                size='sm'
+                icon={
+                  <Image
+                    src='/settings.png'
+                    alt='settings logo'
+                    width={20}
+                    height={20}
+                  />
+                }
+                onClick={() => setIsEditModalOpen(true)}
+              >
+                Modifier
+              </AnimatedButton>
+            )
+          }
+        />
+
+        <ExternalLink
+          href={suggestion.link}
+          icon={suggestion.type === 'article' ? undefined : '/youtube.png'}
+        >
+          {suggestion.type === 'article'
+            ? "📰 Lien vers l'article"
+            : 'Lien vers la vidéo'}
+        </ExternalLink>
+
+        <p className='mt-3 text-gray-700 dark:text-gray-300'>
+          {suggestion.summary}
+        </p>
+        <div className='space-y-1 mt-5'>
+          <p className='text-gray-600 text-sm dark:text-gray-400'>
+            par {suggestion.by}
+          </p>
+          <p className='text-gray-500 text-xs dark:text-gray-500'>
+            posté le {suggestion.date.toLocaleString().split(',')[0]}
+          </p>
+        </div>
+      </Card>
+
+      <Modal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        title='Modifier la suggestion'
+      >
+        <SuggestionForm
+          mode='edit'
+          onClose={() => setIsEditModalOpen(false)}
+          onSubmit={handleEdit}
+          onDelete={handleDelete}
+          initialData={suggestion}
+        />
+      </Modal>
+    </>
   );
 }
 
@@ -157,8 +220,11 @@ function AddSuggestion() {
 
   const handleSubmit = (data: Suggestion) => {
     // Here you would typically make an API call to save the suggestion
-    // For now, we'll just close the modal
-    console.log('New suggestion:', data);
+    console.log('New suggestion:', {
+      ...data,
+      date: new Date(),
+      isAuthor: true,
+    });
     setIsModalOpen(false);
   };
 
@@ -179,7 +245,8 @@ function AddSuggestion() {
         onClose={() => setIsModalOpen(false)}
         title='Nouvelle suggestion'
       >
-        <AddSuggestionForm
+        <SuggestionForm
+          mode='create'
           onClose={() => setIsModalOpen(false)}
           onSubmit={handleSubmit}
         />
@@ -212,15 +279,13 @@ export default function Suggestions() {
           suggestions.length / 4,
         )} gap-6 pad-5 p-5`}
       >
-        {suggestions.map((suggestion, i) => {
-          return (
-            <SuggestionCard
-              key={`suggestion_${i}`}
-              indice={i}
-              suggestion={suggestion}
-            />
-          );
-        })}
+        {suggestions.map((suggestion, i) => (
+          <SuggestionCard
+            key={`suggestion_${i}`}
+            indice={i}
+            suggestion={suggestion}
+          />
+        ))}
       </div>
     </div>
   );
