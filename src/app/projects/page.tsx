@@ -3,117 +3,135 @@
 import Loading from '@/components/Loading';
 import { type Project } from '@/lib/types';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import Card from '@/components/Card';
+import { useDarkMode } from '@/providers/DarkModeProvider';
+import AnimatedButton from '@/components/buttons/AnimatedButton';
+import PlusIcon from '@/components/icons/PlusIcon';
+import { useRouter } from 'next/navigation';
+import LinkPreview from '@/components/LinkPreview';
+import { BentoGrid, BentoGridItem } from '@/components/BentoGrid';
 
-function Integrations() {
+function AddProject() {
+  const router = useRouter();
+
   return (
-    <div className='bg-gray-200 p-4 w-1/2 h-[calc(100vh-42px)] overflow-y-auto'>
-      <h1 className='mb-4 font-bold text-xl'>Intégrations</h1>
+    <div className='flex justify-center mb-8 w-full'>
+      <AnimatedButton
+        icon={<PlusIcon />}
+        size='lg'
+        onClick={() => {
+          router.push('/projects/add');
+        }}
+      >
+        Ajouter un projet
+      </AnimatedButton>
     </div>
   );
 }
 
 type PresentationCardProps = {
   project: Project;
+  className?: string;
 };
 
-function PresentationCard({ project }: PresentationCardProps) {
-  return (
-    <Card className='flex mt-5'>
-      <div className={`w-${project.photo != null ? '2/3' : 'full'}`}>
-        <div className='flex'>
-          <h2 className='font-bold text-xl'>{project.name}</h2>
-          {project.isAuthor ? (
-            <button className='ml-2 hover:scale-110 duration-300'>
+function PresentationCard({ project, className = '' }: PresentationCardProps) {
+  const { isDarkMode } = useDarkMode();
+  const githubIcon = isDarkMode ? '/github_white.png' : '/github_black.png';
+
+  const header = (
+    <>
+      <div className='flex justify-between items-center'>
+        <div className='flex justify-center items-center bg-gradient-to-br from-violet-500 to-blue-500 rounded-full w-12 h-12 font-bold text-white text-xl'>
+          {project.by.charAt(0)}
+        </div>
+        {project.isAuthor && (
+          <AnimatedButton
+            variant='secondary'
+            size='sm'
+            className='ml-auto'
+            icon={
               <Image
                 src='/settings.png'
-                alt='event settings'
+                alt='project settings'
                 width={18}
                 height={18}
               />
-            </button>
-          ) : null}
-        </div>
-        <div className='flex items-center mt-2'>
-          <Image src='/github.png' alt='github logo' height={16} width={16} />
-          <Link
-            target='_blank'
-            className='ml-2 font-bold text-red-400 text-sm'
-            href={project.link}
+            }
           >
-            lien vers le projet
-          </Link>
-        </div>
-        <p className='mt-3'>{project.about}</p>
-        <p className='mt-4 text-sm'>{`par ${project.by}`}</p>
-        <p className='mt-1 text-xs'>{`posté le ${project.date.toLocaleString().split(',')[0]}`}</p>
+            Modifier
+          </AnimatedButton>
+        )}
       </div>
-      {project.photo != null ? (
-        <div className='relative w-1/3'>
-          <Image
-            fill
-            objectFit='cover'
-            src={project.photo}
-            alt='project image'
-          />
-        </div>
-      ) : null}
-    </Card>
+      <div className='bg-gray-200 dark:bg-gray-700 my-4 h-px' />
+    </>
   );
-}
 
-type PresentationsProps = {
-  presentations: Array<Project>;
-};
-
-function Presentations({ presentations }: PresentationsProps) {
   return (
-    <div className='bg-gray-200 p-4 w-1/2 h-[calc(100vh-42px)] overflow-y-auto'>
-      <div className='flex mb-4'>
-        <h1 className='font-bold text-xl'>Présentations</h1>
-        <button className='hover:bg-gray-300 mt-auto mb-auto ml-auto p-1 rounded-sm text-sm'>
-          Ajouter un projet
-        </button>
-      </div>
-      {presentations.map((e, i) => {
-        return <PresentationCard key={`presentation_${i}`} project={e} />;
-      })}
-    </div>
+    <BentoGridItem
+      className={`${className} hover:dark:border-neutral-600 hover:border-neutral-300`}
+      header={header}
+      title={project.name}
+      description={
+        <div className='space-y-3'>
+          <p>{project.about}</p>
+          <div className='flex items-center'>
+            <Image src={githubIcon} alt='github logo' height={16} width={16} />
+            <LinkPreview
+              url={project.link}
+              width={300}
+              height={200}
+              className='ml-2 font-bold text-red-400 text-sm hover:text-red-500 transition-colors duration-200'
+            >
+              Voir le projet
+            </LinkPreview>
+          </div>
+          <div className='space-y-1'>
+            <p className='text-sm'>{`par ${project.by}`}</p>
+            <p className='text-gray-500 text-xs'>{`posté le ${project.date.toLocaleString().split(',')[0]}`}</p>
+          </div>
+        </div>
+      }
+    />
   );
 }
 
 export default function Projects() {
   const [loading, setLoading] = useState<boolean>(true);
 
-  const projects: Array<Project> = [];
-  for (const i of [1, 2, 3, 4, 5]) {
-    projects.push({
-      name: 'Jax Transformer',
-      about:
-        "Ce projet est l'implémentation d'un transformer, decoder-only, en vanilla jax. Il permet de générer des petites histoires.",
-      link: 'https://github.com/DjDonPablo/jax-transformer',
-      by: 'Maël Reynaud',
-      photo: '/transformer.png',
-      date: new Date(2024, 9, 21),
-      isAuthor: i % 2 == 0,
-    } as Project);
-  }
-
   useEffect(() => {
     setLoading(false);
   }, []);
+
+  const projects: Array<Project> = [];
+
+  for (let i = 0; i < 5; i++) {
+    projects.push({
+      name: 'Site SCIA',
+      about:
+        "C'est le développement du site internet de la majeure SCIA pour en faire un endroit accueillant, regroupant plein d'informations, de projets et de connaissances !",
+      link: 'https://github.com/TopAgrume/SCIA_website',
+      by: 'Maël Reynaud',
+      photo: null,
+      date: new Date(),
+      isAuthor: true,
+    } satisfies Project);
+  }
+
   return (
-    <div className='flex h-[calc(100vh-42px)]'>
+    <div className='bg-gray-200 dark:bg-gray-800 p-8'>
+      <AddProject />
       {loading ? (
         <Loading />
       ) : (
-        <>
-          <Integrations />
-          <div className='bg-gray-400 w-[2px] h-[calc(100vh-42px)]'></div>
-          <Presentations presentations={projects} />
-        </>
+        <BentoGrid className='md:grid-cols-2 lg:grid-cols-3 w-full'>
+          {projects.map((project, i) => (
+            <PresentationCard
+              key={i}
+              project={project}
+              className={i === 2 ? 'md:col-span-2 lg:col-span-1' : ''}
+            />
+          ))}
+        </BentoGrid>
       )}
     </div>
   );

@@ -1,14 +1,15 @@
 'use client';
 
 import Badge from '@/components/Badge';
+import Card from '@/components/Card';
+import HoverCard from '@/components/HoverCard';
 import Loading from '@/components/Loading';
+import AnimatedButton from '@/components/buttons/AnimatedButton';
 import { type Event } from '@/lib/types';
+import { ExternalLinkIcon } from '@radix-ui/react-icons';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { ExternalLinkIcon, GearIcon } from '@radix-ui/react-icons';
-import Card from '@/components/Card';
-import HoverCard from '@/components/HoverCard';
 
 type EventCardProps = {
   event: Event;
@@ -38,22 +39,34 @@ function EventCard({ event, index: i }: EventCardProps) {
 
   return (
     <Card className={`block mt-5 ${i % 2 == 0 ? '' : 'ml-auto'} w-8/12`}>
-      <div className='flex'>
-        <h1 className='mt-auto mr-4 mb-auto font-bold text-2xl'>
-          {event.name}
-        </h1>
-        <Link
-          href={event.link}
-          target='_blank'
-          className='mt-auto mb-auto hover:scale-110 hover:text-blue-600 dark:hover:text-blue-400 duration-300'
-        >
-          <ExternalLinkIcon className='w-4 h-4' />
-        </Link>
-        {event.isAuthor ? (
-          <button className='ml-4 hover:scale-110 hover:text-gray-600 dark:hover:text-gray-400 duration-300'>
-            <GearIcon className='w-5 h-5' />
-          </button>
-        ) : null}
+      <div className='flex justify-between items-center mb-4'>
+        <div className='flex items-center'>
+          <h1 className='font-bold text-2xl'>{event.name}</h1>
+          <Link
+            href={event.link}
+            target='_blank'
+            className='ml-4 hover:scale-110 hover:text-blue-600 dark:hover:text-blue-400 duration-300'
+          >
+            <ExternalLinkIcon className='w-4 h-4' />
+          </Link>
+          {event.isAuthor && (
+            <AnimatedButton
+              variant='secondary'
+              size='sm'
+              className='ml-4'
+              icon={
+                <Image
+                  src='/settings.png'
+                  alt='event settings'
+                  width={18}
+                  height={18}
+                />
+              }
+            >
+              Modifier
+            </AnimatedButton>
+          )}
+        </div>
         <Badge
           startDate={event.startDate}
           endDate={event.endDate}
@@ -62,18 +75,22 @@ function EventCard({ event, index: i }: EventCardProps) {
           }}
         />
       </div>
-      <h2 className='text-lg'>{event.place}</h2>
-      <h3 className='mb-4 text-sm'>
-        {event.endDate == null
-          ? event.startDate.toLocaleString().split(',')[0]
-          : `du ${event.startDate.toLocaleString().split(',')[0]} au ${
-              event.endDate.toLocaleString().split(',')[0]
-            }`}
-      </h3>
-      <p className='mb-4'>{event.about}</p>
-      <p className='mb-5 text-sm'>{`par ${event.by}`}</p>
+      <div className='space-y-2 mb-6'>
+        <h2 className='text-gray-800 text-lg dark:text-gray-200'>
+          {event.place}
+        </h2>
+        <h3 className='text-gray-600 text-sm dark:text-gray-400'>
+          {event.endDate == null
+            ? event.startDate.toLocaleString().split(',')[0]
+            : `du ${event.startDate.toLocaleString().split(',')[0]} au ${
+                event.endDate.toLocaleString().split(',')[0]
+              }`}
+        </h3>
+      </div>
+      <p className='mb-4 text-gray-700 dark:text-gray-300'>{event.about}</p>
+      <p className='mb-5 text-gray-600 text-sm dark:text-gray-400'>{`par ${event.by}`}</p>
 
-      <div className='relative flex'>
+      <div className='flex items-center'>
         <button
           className={`${
             attending
@@ -91,7 +108,7 @@ function EventCard({ event, index: i }: EventCardProps) {
           content={<ParticipantsList participants={event.participants} />}
           position='bottom'
         >
-          <span className='mt-auto mb-auto text-sm hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 hover:cursor-pointer'>
+          <span className='text-sm hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 hover:cursor-pointer'>
             Voir la liste des participants
           </span>
         </HoverCard>
