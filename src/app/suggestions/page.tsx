@@ -131,7 +131,7 @@ function SuggestionCard({ indice, suggestion }: SuggestionProps) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const handleEdit = (data: Suggestion) => {
-    // Here you would typically make an API call to update the suggestion
+    // API Call to update the suggestion
     console.log('Updated suggestion:', {
       ...data,
       date: new Date(),
@@ -141,7 +141,7 @@ function SuggestionCard({ indice, suggestion }: SuggestionProps) {
   };
 
   const handleDelete = () => {
-    // Here you would typically make an API call to delete the suggestion
+    // API Call to delete the suggestion
     console.log('Deleting suggestion:', suggestion);
     setIsEditModalOpen(false);
   };
@@ -219,7 +219,7 @@ function AddSuggestion() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleSubmit = (data: Suggestion) => {
-    // Here you would typically make an API call to save the suggestion
+    // API Call to save the suggestion
     console.log('New suggestion:', {
       ...data,
       date: new Date(),
