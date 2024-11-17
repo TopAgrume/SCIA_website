@@ -9,6 +9,7 @@ import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { Suspense, useEffect, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
+import { useDarkMode } from '@/providers/DarkModeProvider';
 
 function Presentation() {
   return (
@@ -34,44 +35,46 @@ function Presentation() {
   );
 }
 
-function Links() {
+function LinksCard() {
+  const { isDarkMode } = useDarkMode();
+  const githubIcon = isDarkMode ? '/github_white.png' : '/github_black.png';
+  const discordIcon = isDarkMode ? '/discord_white.png' : '/discord_black.png';
+
   return (
     <Card>
-      <h2 className='mb-4 font-bold text-2xl text-gray-800 dark:text-gray-100'>
-        Liens utiles
-      </h2>
-      <ul className='space-y-4'>
+      <h2 className='mb-4 font-bold text-lg'>Liens utiles</h2>
+      <ul className='space-y-3'>
         <li>
           <Link
-            href='https://discord.gg/B4hdx4HV'
+            href='https://github.com/epita'
             target='_blank'
-            className='flex items-center text-gray-600 hover:text-gray-800 dark:hover:text-white dark:text-gray-300 transition-colors group'
+            className='flex items-center hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded group'
           >
             <Image
-              src='/discord.png'
+              src={githubIcon}
+              alt='github logo'
+              width={24}
+              height={24}
+              className='mr-2'
+            />
+            <span className='flex-grow'>Github EPITA</span>
+            <ExternalLink className='opacity-0 group-hover:opacity-100 w-4 h-4 transition-opacity' />
+          </Link>
+        </li>
+        <li>
+          <Link
+            href='https://discord.gg/your-discord'
+            target='_blank'
+            className='flex items-center hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded group'
+          >
+            <Image
+              src={discordIcon}
               alt='discord logo'
               width={24}
               height={24}
               className='mr-2'
             />
             <span className='flex-grow'>Serveur discord SCIA 2025</span>
-            <ExternalLink className='opacity-0 group-hover:opacity-100 w-4 h-4 transition-opacity' />
-          </Link>
-        </li>
-        <li>
-          <Link
-            href='https://www.wolframalpha.com/'
-            target='_blank'
-            className='flex items-center text-gray-600 hover:text-gray-800 dark:hover:text-white dark:text-gray-300 transition-colors group'
-          >
-            <Image
-              src='/wolfram.png'
-              alt='wolfram logo'
-              width={24}
-              height={24}
-              className='mr-2'
-            />
-            <span className='flex-grow'>Wolfram alpha</span>
             <ExternalLink className='opacity-0 group-hover:opacity-100 w-4 h-4 transition-opacity' />
           </Link>
         </li>
@@ -247,7 +250,7 @@ export default function Home() {
     <main className='mx-auto px-4 py-8 container'>
       <div className='gap-8 grid md:grid-cols-2'>
         <Presentation />
-        <Links />
+        <LinksCard />
       </div>
       <AiNews />
     </main>

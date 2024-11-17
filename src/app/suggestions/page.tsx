@@ -5,14 +5,25 @@ import Link from 'next/link';
 
 function AddSuggestion() {
   return (
-    <div className='flex justify-center items-center w-screen'>
-      <div className='flex mr-auto ml-auto'>
-        <p className='p-2 font-bold'>{'-> ->'}</p>
-        <button className='hover:bg-gray-300 p-2 rounded-sm font-bold'>
+    <div className='flex justify-center mb-8 w-full'>
+      <button className='relative before:-z-10 before:absolute before:inset-0 bg-black dark:bg-white before:bg-gradient-to-r before:from-blue-600 before:to-violet-600 before:opacity-0 hover:before:opacity-100 hover:shadow-xl before:blur-xl px-8 py-3 rounded-xl before:rounded-xl font-bold text-white dark:text-black transform transition-all before:transition-opacity hover:-translate-y-1 duration-300 before:duration-300 group'>
+        <span className='flex items-center'>
+          <svg
+            className='group-hover:rotate-180 mr-2 w-5 h-5 transform transition-transform duration-300'
+            fill='none'
+            viewBox='0 0 24 24'
+            stroke='currentColor'
+          >
+            <path
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              strokeWidth={2}
+              d='M12 4v16m8-8H4'
+            />
+          </svg>
           Ajouter une suggestion
-        </button>
-        <p className='p-2 font-bold'>{'<- <-'}</p>
-      </div>
+        </span>
+      </button>
     </div>
   );
 }
@@ -90,7 +101,7 @@ export default function Suggestions() {
   }
 
   return (
-    <div className='pt-4'>
+    <div className='flex flex-wrap bg-gray-200 dark:bg-gray-800 p-5'>
       <AddSuggestion />
       <div
         className={`grid grid-cols-3 grid-rows-${Math.ceil(suggestions.length / 4)} gap-6 pad-5 p-5`}

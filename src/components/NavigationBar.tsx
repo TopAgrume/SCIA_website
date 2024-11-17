@@ -87,7 +87,6 @@ export default function NavigationBar() {
           </div>
         </div>
       </div>
-      <div className='bg-black w-full h-0.5' />
     </header>
   );
 }
