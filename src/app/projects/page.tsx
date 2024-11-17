@@ -7,25 +7,127 @@ import { useEffect, useState } from 'react';
 import { useDarkMode } from '@/providers/DarkModeProvider';
 import AnimatedButton from '@/components/buttons/AnimatedButton';
 import PlusIcon from '@/components/icons/PlusIcon';
-import { useRouter } from 'next/navigation';
 import LinkPreview from '@/components/LinkPreview';
 import { BentoGrid, BentoGridItem } from '@/components/BentoGrid';
+import Modal from '@/components/Modal';
+import { useForm } from 'react-hook-form';
 
-function AddProject() {
-  const router = useRouter();
+function AddProjectForm({
+  onClose,
+  onSubmit,
+}: {
+  onClose: () => void;
+  onSubmit: (data: Project) => void;
+}) {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<Project>();
 
   return (
-    <div className='flex justify-center mb-8 w-full'>
-      <AnimatedButton
-        icon={<PlusIcon />}
-        size='lg'
-        onClick={() => {
-          router.push('/projects/add');
-        }}
+    <form onSubmit={handleSubmit(onSubmit)} className='space-y-6'>
+      <div>
+        <label className='block mb-1 font-medium text-gray-700 text-sm dark:text-gray-300'>
+          Nom du projet
+        </label>
+        <input
+          {...register('name', { required: 'Le nom est requis' })}
+          className='border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm px-3 py-2 border focus:border-blue-500 rounded-md focus:ring-blue-500 w-full'
+        />
+        {errors.name && (
+          <p className='mt-1 text-red-600 text-sm'>{errors.name.message}</p>
+        )}
+      </div>
+
+      <div>
+        <label className='block mb-1 font-medium text-gray-700 text-sm dark:text-gray-300'>
+          Description
+        </label>
+        <textarea
+          {...register('about', { required: 'La description est requise' })}
+          rows={4}
+          className='border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm px-3 py-2 border focus:border-blue-500 rounded-md focus:ring-blue-500 w-full'
+        />
+        {errors.about && (
+          <p className='mt-1 text-red-600 text-sm'>{errors.about.message}</p>
+        )}
+      </div>
+
+      <div>
+        <label className='block mb-1 font-medium text-gray-700 text-sm dark:text-gray-300'>
+          Lien du projet
+        </label>
+        <input
+          {...register('link', {
+            required: 'Le lien est requis',
+            pattern: {
+              value: /^https?:\/\/.+/,
+              message: 'Le lien doit commencer par http:// ou https://',
+            },
+          })}
+          className='border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm px-3 py-2 border focus:border-blue-500 rounded-md focus:ring-blue-500 w-full'
+        />
+        {errors.link && (
+          <p className='mt-1 text-red-600 text-sm'>{errors.link.message}</p>
+        )}
+      </div>
+
+      {/* TODO: photo upload ? ou en vrai balek trop de galere pour pas grand chose */}
+      {/* <div>
+        <label className='block mb-1 font-medium text-gray-700 text-sm dark:text-gray-300'>
+          Photo du projet (optionnel)
+        </label>
+        <input
+          type='url'
+          {...register('photo')}
+          placeholder='URL de l image'
+          className='border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm px-3 py-2 border focus:border-blue-500 rounded-md focus:ring-blue-500 w-full'
+        />
+      </div> */}
+
+      <div className='flex justify-end space-x-3'>
+        <AnimatedButton variant='secondary' onClick={onClose}>
+          Annuler
+        </AnimatedButton>
+        <AnimatedButton variant='primary'>Créer</AnimatedButton>
+      </div>
+    </form>
+  );
+}
+
+function AddProject() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleSubmit = (data: Project) => {
+    // API Call to save the project
+    console.log('New project:', data);
+    setIsModalOpen(false);
+  };
+
+  return (
+    <>
+      <div className='flex justify-center mb-8 w-full'>
+        <AnimatedButton
+          icon={<PlusIcon />}
+          size='lg'
+          onClick={() => setIsModalOpen(true)}
+        >
+          Ajouter un projet
+        </AnimatedButton>
+      </div>
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title='Nouveau projet'
       >
-        Ajouter un projet
-      </AnimatedButton>
-    </div>
+        <AddProjectForm
+          onClose={() => setIsModalOpen(false)}
+          onSubmit={handleSubmit}
+        />
+      </Modal>
+    </>
   );
 }
 

@@ -5,9 +5,11 @@ import Card from '@/components/Card';
 import CardHeader from '@/components/cards/CardHeader';
 import PlusIcon from '@/components/icons/PlusIcon';
 import ExternalLink from '@/components/links/ExternalLink';
+import Modal from '@/components/Modal';
 import { type Suggestion } from '@/lib/types';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 
 type SuggestionProps = {
   indice: number;
@@ -65,21 +67,124 @@ function SuggestionCard({ indice, suggestion }: SuggestionProps) {
   );
 }
 
-function AddSuggestion() {
-  const router = useRouter();
+function AddSuggestionForm({
+  onClose,
+  onSubmit,
+}: {
+  onClose: () => void;
+  onSubmit: (data: Suggestion) => void;
+}) {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<Suggestion>();
 
   return (
-    <div className='flex justify-center mb-8 w-full'>
-      <AnimatedButton
-        icon={<PlusIcon />}
-        size='lg'
-        onClick={() => {
-          router.push('/suggestions/add');
-        }}
+    <form onSubmit={handleSubmit(onSubmit)} className='space-y-6'>
+      <div>
+        <label className='block mb-1 font-medium text-gray-700 text-sm dark:text-gray-300'>
+          Titre
+        </label>
+        <input
+          {...register('name', { required: 'Le titre est requis' })}
+          className='border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm px-3 py-2 border focus:border-blue-500 rounded-md focus:ring-blue-500 w-full'
+        />
+        {errors.name && (
+          <p className='mt-1 text-red-600 text-sm'>{errors.name.message}</p>
+        )}
+      </div>
+
+      <div>
+        <label className='block mb-1 font-medium text-gray-700 text-sm dark:text-gray-300'>
+          Type
+        </label>
+        <select
+          {...register('type', { required: 'Le type est requis' })}
+          className='border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm px-3 py-2 border focus:border-blue-500 rounded-md focus:ring-blue-500 w-full'
+        >
+          <option value='article'>Article</option>
+          <option value='video'>Vidéo</option>
+          <option value='other'>Autre</option>
+        </select>
+      </div>
+
+      <div>
+        <label className='block mb-1 font-medium text-gray-700 text-sm dark:text-gray-300'>
+          Lien
+        </label>
+        <input
+          {...register('link', {
+            required: 'Le lien est requis',
+            pattern: {
+              value: /^https?:\/\/.+/,
+              message: 'Le lien doit commencer par http:// ou https://',
+            },
+          })}
+          className='border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm px-3 py-2 border focus:border-blue-500 rounded-md focus:ring-blue-500 w-full'
+        />
+        {errors.link && (
+          <p className='mt-1 text-red-600 text-sm'>{errors.link.message}</p>
+        )}
+      </div>
+
+      <div>
+        <label className='block mb-1 font-medium text-gray-700 text-sm dark:text-gray-300'>
+          Résumé
+        </label>
+        <textarea
+          {...register('summary', { required: 'Le résumé est requis' })}
+          rows={4}
+          className='border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm px-3 py-2 border focus:border-blue-500 rounded-md focus:ring-blue-500 w-full'
+        />
+        {errors.summary && (
+          <p className='mt-1 text-red-600 text-sm'>{errors.summary.message}</p>
+        )}
+      </div>
+
+      <div className='flex justify-end space-x-3'>
+        <AnimatedButton variant='secondary' onClick={onClose}>
+          Annuler
+        </AnimatedButton>
+        <AnimatedButton variant='primary'>Créer</AnimatedButton>
+      </div>
+    </form>
+  );
+}
+
+function AddSuggestion() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleSubmit = (data: Suggestion) => {
+    // Here you would typically make an API call to save the suggestion
+    // For now, we'll just close the modal
+    console.log('New suggestion:', data);
+    setIsModalOpen(false);
+  };
+
+  return (
+    <>
+      <div className='flex justify-center mb-8 w-full'>
+        <AnimatedButton
+          icon={<PlusIcon />}
+          size='lg'
+          onClick={() => setIsModalOpen(true)}
+        >
+          Ajouter une suggestion
+        </AnimatedButton>
+      </div>
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title='Nouvelle suggestion'
       >
-        Ajouter une suggestion
-      </AnimatedButton>
-    </div>
+        <AddSuggestionForm
+          onClose={() => setIsModalOpen(false)}
+          onSubmit={handleSubmit}
+        />
+      </Modal>
+    </>
   );
 }
 

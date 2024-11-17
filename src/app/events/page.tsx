@@ -4,12 +4,15 @@ import Badge from '@/components/Badge';
 import Card from '@/components/Card';
 import HoverCard from '@/components/HoverCard';
 import Loading from '@/components/Loading';
+import Modal from '@/components/Modal';
 import AnimatedButton from '@/components/buttons/AnimatedButton';
+import PlusIcon from '@/components/icons/PlusIcon';
 import { type Event } from '@/lib/types';
 import { ExternalLinkIcon } from '@radix-ui/react-icons';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
 
 type EventCardProps = {
   event: Event;
@@ -117,28 +120,174 @@ function EventCard({ event, index: i }: EventCardProps) {
   );
 }
 
-function AddEvent() {
+function AddEventForm({
+  onClose,
+  onSubmit,
+}: {
+  onClose: () => void;
+  onSubmit: (data: Event) => void;
+}) {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<Event>();
+
+  const startDate = watch('startDate');
+
   return (
-    <div className='flex justify-center mb-8 w-full'>
-      <button className='relative before:-z-10 before:absolute before:inset-0 bg-black dark:bg-white before:bg-gradient-to-r before:from-blue-600 before:to-violet-600 before:opacity-0 hover:before:opacity-100 hover:shadow-xl before:blur-xl px-8 py-3 rounded-xl before:rounded-xl font-bold text-white dark:text-black transform transition-all before:transition-opacity hover:-translate-y-1 duration-300 before:duration-300 group'>
-        <span className='flex items-center'>
-          <svg
-            className='group-hover:rotate-180 mr-2 w-5 h-5 transform transition-transform duration-300'
-            fill='none'
-            viewBox='0 0 24 24'
-            stroke='currentColor'
-          >
-            <path
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              strokeWidth={2}
-              d='M12 4v16m8-8H4'
-            />
-          </svg>
+    <form onSubmit={handleSubmit(onSubmit)} className='space-y-6'>
+      <div>
+        <label className='block mb-1 font-medium text-gray-700 text-sm dark:text-gray-300'>
+          Nom de l'événement
+        </label>
+        <input
+          {...register('name', {
+            required: "Le nom de l'événement est requis",
+          })}
+          className='border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm px-3 py-2 border focus:border-blue-500 rounded-md focus:ring-blue-500 w-full'
+        />
+        {errors.name && (
+          <p className='mt-1 text-red-600 text-sm'>{errors.name.message}</p>
+        )}
+      </div>
+
+      <div>
+        <label className='block mb-1 font-medium text-gray-700 text-sm dark:text-gray-300'>
+          Lieu
+        </label>
+        <input
+          {...register('place', { required: 'Le lieu est requis' })}
+          className='border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm px-3 py-2 border focus:border-blue-500 rounded-md focus:ring-blue-500 w-full'
+        />
+        {errors.place && (
+          <p className='mt-1 text-red-600 text-sm'>{errors.place.message}</p>
+        )}
+      </div>
+
+      <div>
+        <label className='block mb-1 font-medium text-gray-700 text-sm dark:text-gray-300'>
+          Description
+        </label>
+        <textarea
+          {...register('about', { required: 'La description est requise' })}
+          rows={4}
+          className='border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm px-3 py-2 border focus:border-blue-500 rounded-md focus:ring-blue-500 w-full'
+        />
+        {errors.about && (
+          <p className='mt-1 text-red-600 text-sm'>{errors.about.message}</p>
+        )}
+      </div>
+
+      <div>
+        <label className='block mb-1 font-medium text-gray-700 text-sm dark:text-gray-300'>
+          Lien (optionnel)
+        </label>
+        <input
+          {...register('link', {
+            pattern: {
+              value: /^https?:\/\/.+/,
+              message: 'Le lien doit commencer par http:// ou https://',
+            },
+          })}
+          className='border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm px-3 py-2 border focus:border-blue-500 rounded-md focus:ring-blue-500 w-full'
+        />
+        {errors.link && (
+          <p className='mt-1 text-red-600 text-sm'>{errors.link.message}</p>
+        )}
+      </div>
+
+      <div className='gap-4 grid grid-cols-2'>
+        <div>
+          <label className='block mb-1 font-medium text-gray-700 text-sm dark:text-gray-300'>
+            Date de début
+          </label>
+          <input
+            type='datetime-local'
+            {...register('startDate', {
+              required: 'La date de début est requise',
+            })}
+            className='border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm px-3 py-2 border focus:border-blue-500 rounded-md focus:ring-blue-500 w-full'
+          />
+          {errors.startDate && (
+            <p className='mt-1 text-red-600 text-sm'>
+              {errors.startDate.message}
+            </p>
+          )}
+        </div>
+
+        <div>
+          <label className='block mb-1 font-medium text-gray-700 text-sm dark:text-gray-300 whitespace-nowrap'>
+            Date de fin (optionnelle)
+          </label>
+          <input
+            type='datetime-local'
+            {...register('endDate', {
+              validate: value =>
+                !value ||
+                new Date(value) > new Date(startDate) ||
+                'La date de fin doit être après la date de début',
+            })}
+            className='border-gray-300 dark:border-gray-600 dark:bg-gray-700 shadow-sm px-3 py-2 border focus:border-blue-500 rounded-md focus:ring-blue-500 w-full'
+          />
+          {errors.endDate && (
+            <p className='mt-1 text-red-600 text-sm'>
+              {errors.endDate.message}
+            </p>
+          )}
+        </div>
+      </div>
+
+      <div className='flex justify-end space-x-3'>
+        <AnimatedButton variant='secondary' onClick={onClose}>
+          Annuler
+        </AnimatedButton>
+        <AnimatedButton variant='primary'>Créer</AnimatedButton>
+      </div>
+    </form>
+  );
+}
+
+function AddEvent() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleSubmit = (data: Event) => {
+    // Here you would typically make an API call to save the event
+    console.log('New event:', {
+      ...data,
+      startDate: new Date(data.startDate),
+      endDate: data.endDate ? new Date(data.endDate) : null,
+      attending: false,
+      participants: [],
+      isAuthor: true,
+    });
+    setIsModalOpen(false);
+  };
+
+  return (
+    <>
+      <div className='flex justify-center mb-8 w-full'>
+        <AnimatedButton
+          icon={<PlusIcon />}
+          size='lg'
+          onClick={() => setIsModalOpen(true)}
+        >
           Ajouter un événement
-        </span>
-      </button>
-    </div>
+        </AnimatedButton>
+      </div>
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title='Nouvel événement'
+      >
+        <AddEventForm
+          onClose={() => setIsModalOpen(false)}
+          onSubmit={handleSubmit}
+        />
+      </Modal>
+    </>
   );
 }
 

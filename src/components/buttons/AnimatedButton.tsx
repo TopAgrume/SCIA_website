@@ -5,6 +5,7 @@ type AnimatedButtonProps = {
   size?: 'sm' | 'md' | 'lg';
   className?: string;
   icon?: React.ReactNode;
+  type?: 'button' | 'submit' | 'reset';
 };
 
 export default function AnimatedButton({
