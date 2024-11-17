@@ -4,36 +4,32 @@ type Event = {
   place: string;
   about: string;
   startDate: Date;
-  endDate: Date | null;
-  by: string;
-  attending: boolean;
+  endDate: Date;
+  imagePath: string;
+  by: string; // who made the event
+  attending: boolean; // if the current user is attending to this event
   participants: Array<string>;
-  isAuthor: boolean;
+  isAuthor: boolean; // if the user made the post => he can modify or delete it
 };
-
-// type User = {
-//   login: string;
-//   mail: string;
-// };
 
 type Project = {
   name: string;
   about: string;
   link: string;
-  by: string;
-  photo: string | null;
+  by: string; // who made the project
+  image: string;
   date: Date;
-  isAuthor: boolean;
+  isAuthor: boolean; // same as for Event
 };
 
 type Suggestion = {
-  type: 'article' | 'video' | 'other';
+  type: 'ARTICLE' | 'VIDEO';
   link: string;
   name: string;
   summary: string;
-  by: string;
+  by: string; // the user who made the suggestion
   date: Date;
-  isAuthor: boolean;
+  isAuthor: boolean; // same as for Event
 };
 
 export type { Event, Project, Suggestion };

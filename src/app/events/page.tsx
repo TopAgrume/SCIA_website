@@ -8,11 +8,11 @@ import Modal from '@/components/Modal';
 import AnimatedButton from '@/components/buttons/AnimatedButton';
 import PlusIcon from '@/components/icons/PlusIcon';
 import { type Event } from '@/lib/types';
-import { ExternalLinkIcon } from '@radix-ui/react-icons';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useEffect, useState } from 'react';
+import { ExternalLinkIcon, SymbolIcon } from '@radix-ui/react-icons';
 
 type EventCardProps = {
   event: Event;
@@ -221,6 +221,33 @@ function EventForm({
 function EventCard({ event, index: i }: EventCardProps) {
   const [attending, setAttending] = useState<boolean>(event.attending);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [attendingLoading, setAttendingLoading] = useState<boolean>(false);
+
+  const attendEvent = async () => {
+    setAttendingLoading(true);
+
+    const data = await fetch('/api/events/attend', {
+      method: 'POST',
+      body: JSON.stringify({ name: event.name }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    if (data.status === 200) {
+      setAttending(!attending);
+      if (!attending)
+        event.participants.push('JOHN DOE'); // TODO: change with username
+      else {
+        const index = event.participants.indexOf('JOHN DOE'); // TODO: change with username
+        if (index > -1) {
+          event.participants.splice(index, 1);
+        }
+      }
+    } else {
+      console.error(`Fetch returned ${data.status}`);
+    }
+    setAttendingLoading(false);
+  };
 
   const handleEdit = (data: Event) => {
     // Here you would typically make an API call to update the event
@@ -303,11 +330,15 @@ function EventCard({ event, index: i }: EventCardProps) {
                 ? 'bg-red-100 hover:bg-red-200 text-red-700 border-red-300'
                 : 'bg-green-100 hover:bg-green-200 text-green-700 border-green-300'
             } mr-4 px-4 py-2 border rounded-lg font-bold text-sm transition-all duration-200 hover:shadow-md`}
-            onClick={() => {
-              setAttending(!attending);
-            }}
+            onClick={attendEvent}
           >
-            {!attending ? "😊 J'y serai !" : "Je n'y serai pas 😞"}
+            {attendingLoading ? (
+              <SymbolIcon className='animate-spin' />
+            ) : !attending ? (
+              "😊 J'y serai !"
+            ) : (
+              "Je n'y serai pas 😞"
+            )}
           </button>
 
           <HoverCard
@@ -383,35 +414,37 @@ function AddEvent() {
 
 export default function Events() {
   const [loading, setLoading] = useState<boolean>(true);
+  const [events, setEvents] = useState<Array<Event>>([]);
 
   useEffect(() => {
-    setLoading(false);
+    const fetchData = async () => {
+      const data = await fetch('/api/events');
+      if (data.status !== 200) {
+        console.error(`Fetch returned ${data.status}`);
+        return;
+      }
+      const json = (await data.json()) as Array<Event>;
+      setEvents(
+        json.map(event => {
+          return {
+            ...event,
+            startDate: new Date(event.startDate),
+            endDate: new Date(event.endDate),
+          } as Event;
+        }),
+      );
+    };
+
+    fetchData()
+      .then(() => {
+        setLoading(false);
+      })
+      .catch(console.error);
   }, []);
 
-  const events: Array<Event> = [];
-  for (const i of [1, 2, 3, 4, 5]) {
-    events.push({
-      name: 'Développement du site SCIA',
-      link: 'https://github.com/TopAgrume/SCIA_website',
-      place: 'Paris',
-      about:
-        "C'est le développement du site internet de la majeure SCIA pour en faire un endroit accueillant, regroupant plein d'informations, de projets et de connaissances !",
-      startDate: new Date(2024, 9, 23 - i),
-      endDate: null,
-      by: 'Maël Reynaud & Alexandre Devaux-Rivière & Pierre-Louis Favreau',
-      attending: false,
-      participants: [
-        'mael.reynaud',
-        'alexandre.devaux-riviere',
-        'pierre-louis.favreau',
-      ],
-      isAuthor: i % 2 == 0,
-    } as unknown as Event);
-  }
-
   return (
-    <div className='flex flex-wrap bg-gray-200 dark:bg-gray-800 p-5'>
-      <AddEvent />
+    <div className='flex flex-wrap bg-gray-200 p-5'>
+      {loading ? null : <AddEvent />}
       {loading ? (
         <Loading />
       ) : (
@@ -425,11 +458,10 @@ export default function Events() {
                     <div className='absolute inset-0 opacity-80 hover:opacity-100 rounded-2xl transition-opacity duration-300 overflow-hidden'>
                       <div className='z-10 absolute inset-0 bg-gradient-to-t from-black/60 to-transparent' />
                       <Image
-                        src={`/cats/${i}.jpg`}
+                        src={`/static/images/cats/${event.imagePath}`}
                         alt='goofy cat'
-                        layout='fill'
-                        objectFit='cover'
-                        className='group-hover:scale-105 transition-transform duration-300'
+                        fill
+                        sizes='100vh group-hover:scale-105 transition-transform duration-300'
                       />
                     </div>
                   </div>
@@ -440,11 +472,10 @@ export default function Events() {
                     <div className='absolute inset-0 opacity-80 hover:opacity-100 rounded-2xl transition-opacity duration-300 overflow-hidden'>
                       <div className='z-10 absolute inset-0 bg-gradient-to-t from-black/60 to-transparent' />
                       <Image
-                        src={`/cats/${i}.jpg`}
+                        src={`/static/images/cats/${event.imagePath}`}
                         alt='goofy cat'
-                        layout='fill'
-                        objectFit='cover'
-                        className='group-hover:scale-105 transition-transform duration-300'
+                        fill
+                        sizes='100vh'
                       />
                     </div>
                   </div>

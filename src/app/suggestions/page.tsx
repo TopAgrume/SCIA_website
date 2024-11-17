@@ -8,8 +8,9 @@ import ExternalLink from '@/components/links/ExternalLink';
 import Modal from '@/components/Modal';
 import { type Suggestion } from '@/lib/types';
 import Image from 'next/image';
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import Loading from '@/components/Loading';
+import { useEffect, useState } from 'react';
 
 type SuggestionFormProps = {
   onClose: () => void;
@@ -178,9 +179,9 @@ function SuggestionCard({ indice, suggestion }: SuggestionProps) {
 
         <ExternalLink
           href={suggestion.link}
-          icon={suggestion.type === 'article' ? undefined : '/youtube.png'}
+          icon={suggestion.type === 'ARTICLE' ? undefined : '/youtube.png'}
         >
-          {suggestion.type === 'article'
+          {suggestion.type === 'ARTICLE'
             ? "📰 Lien vers l'article"
             : 'Lien vers la vidéo'}
         </ExternalLink>
@@ -256,37 +257,56 @@ function AddSuggestion() {
 }
 
 export default function Suggestions() {
-  const suggestions: Array<Suggestion> = [];
+  const [loading, setLoading] = useState<boolean>(true);
+  const [suggestions, setSuggestions] = useState<Array<Suggestion>>([]);
 
-  for (let i = 0; i < 4; i++) {
-    suggestions.push({
-      name: 'Attention is all you need',
-      type: 'article',
-      by: 'Maël Reynaud',
-      date: new Date(21, 9, 2024),
-      isAuthor: true,
-      link: 'https://arxiv.org/pdf/1706.03762',
-      summary:
-        'Article presenting a new architecture called Transformer which uses attention mechanism.',
-    } as Suggestion);
-  }
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await fetch('/api/suggestions');
+      if (data.status !== 200) {
+        console.error(`Fetch returned ${data.status}`);
+        return;
+      }
+      const json = (await data.json()) as Array<Suggestion>;
+      setSuggestions(
+        json.map(suggestion => {
+          return {
+            ...suggestion,
+            date: new Date(suggestion.date),
+          } as Suggestion;
+        }),
+      );
+    };
+
+    fetchData()
+      .then(() => {
+        setLoading(false);
+      })
+      .catch(console.error);
+  }, []);
 
   return (
-    <div className='flex flex-wrap bg-gray-200 dark:bg-gray-800 p-5'>
-      <AddSuggestion />
-      <div
-        className={`grid grid-cols-3 grid-rows-${Math.ceil(
-          suggestions.length / 4,
-        )} gap-6 pad-5 p-5`}
-      >
-        {suggestions.map((suggestion, i) => (
-          <SuggestionCard
-            key={`suggestion_${i}`}
-            indice={i}
-            suggestion={suggestion}
-          />
-        ))}
-      </div>
-    </div>
+    <>
+      {loading ? (
+        <Loading />
+      ) : (
+        <div className='flex flex-wrap bg-gray-200 dark:bg-gray-800 p-5'>
+          <AddSuggestion />
+          <div
+            className={`grid grid-cols-3 grid-rows-${Math.ceil(
+              suggestions.length / 4,
+            )} gap-6 pad-5 p-5`}
+          >
+            {suggestions.map((suggestion, i) => (
+              <SuggestionCard
+                key={`suggestion_${i}`}
+                indice={i}
+                suggestion={suggestion}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+    </>
   );
 }

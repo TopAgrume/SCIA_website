@@ -255,25 +255,33 @@ function AddProject() {
 
 export default function Projects() {
   const [loading, setLoading] = useState<boolean>(true);
+  const [projects, setProjects] = useState<Array<Project>>([]);
 
   useEffect(() => {
-    setLoading(false);
+    const fetchData = async () => {
+      const data = await fetch('/api/projects');
+      if (data.status !== 200) {
+        console.error(`Fetch returned ${data.status}`);
+        return;
+      }
+      const json = (await data.json()) as Array<Project>;
+      setProjects(
+        json.map(project => {
+          return {
+            ...project,
+            image: 'transformer.png',
+            date: new Date(project.date),
+          } as Project;
+        }),
+      );
+    };
+
+    fetchData()
+      .then(() => {
+        setLoading(false);
+      })
+      .catch(console.error);
   }, []);
-
-  const projects: Array<Project> = [];
-
-  for (let i = 0; i < 5; i++) {
-    projects.push({
-      name: 'Site SCIA',
-      about:
-        "C'est le développement du site internet de la majeure SCIA pour en faire un endroit accueillant, regroupant plein d'informations, de projets et de connaissances !",
-      link: 'https://github.com/TopAgrume/SCIA_website',
-      by: 'Maël Reynaud',
-      photo: null,
-      date: new Date(),
-      isAuthor: true,
-    } satisfies Project);
-  }
 
   return (
     <div className='bg-gray-200 dark:bg-gray-800 p-8'>
