@@ -17,7 +17,7 @@ type Project = {
   about: string;
   link: string;
   by: string; // who made the project
-  image: string;
+  image?: string | null;
   date: Date;
   isAuthor: boolean; // same as for Event
 };
