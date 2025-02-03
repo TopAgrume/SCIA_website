@@ -1,0 +1,50 @@
+version: '3.8'
+
+volumes:
+  postgres_data:
+    name: postgres_data_prod
+
+services:
+  db:
+    image: postgres:15.2-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER:-backend}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
+      POSTGRES_DB: ${DB_NAME:-postgres}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-backend} -d ${DB_NAME:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend.prod
+    restart: always
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+    depends_on:
+      - db
+
+  migrator:
+    image: node:18-alpine
+    working_dir: /app
+    volumes:
+      - ./prisma:/app/prisma
+    command: >
+      sh -c "npm install prisma --no-save &&
+             npx prisma generate &&
+             npx prisma migrate deploy"
+    environment:
+      DATABASE_URL: 'postgresql://${DB_USER:-backend}:${DB_PASSWORD:-password}@db:5432/${DB_NAME:-backend}'
+    depends_on:
+      db:
+        condition: service_healthy
