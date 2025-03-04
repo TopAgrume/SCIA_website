@@ -8,6 +8,7 @@ services:
   db:
     image: postgres:15.2-alpine
     restart: always
+    profiles: ['db', 'all']
     environment:
       POSTGRES_USER: ${DB_USER:-backend}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
@@ -15,21 +16,41 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
-      - '5432:5432'  # Exposed for development
+      - '5432:5432' # Exposed for development
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-backend} -d ${DB_NAME:-postgres}"]
+      test:
+        [
+          'CMD-SHELL',
+          'pg_isready -U ${DB_USER:-backend} -d ${DB_NAME:-postgres}',
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 5s
 
+  db-migrator:
+    image: liquibase:4.31-alpine
+    profiles: ['db', 'all']
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./db:/liquibase/db
+    environment:
+      - LIQUIBASE_LOG_LEVEL=ERROR
+      - LIQUIBASE_COMMAND_URL=jdbc:postgresql://db:${DB_EXPOSED_PORT}/${DB_NAME:-postgres}
+      - LIQUIBASE_COMMAND_USERNAME=${DB_USER:-backend}
+      - LIQUIBASE_COMMAND_PASSWORD=${DB_PASSWORD:-password}
+    command: liquibase --changeLogFile="db/changelogs/versions/changelog_${DB_VERSION:-init}.xml" update
+
   frontend:
+    profiles: ['all']
     build:
       context: .
       dockerfile: Dockerfile.frontend.dev
     volumes:
-      - .:/app  # Mount source code for hot reload
-      - /app/node_modules  # Don't override node_modules
+      - .:/app # Mount source code for hot reload
+      - /app/node_modules # Don't override node_modules
     ports:
       - '3000:3000'
     environment:
@@ -37,18 +58,3 @@ services:
       - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
     depends_on:
       - db
-
-  migrator:
-    image: node:18-alpine
-    working_dir: /app
-    volumes:
-      - ./prisma:/app/prisma
-    command: >
-      sh -c "npm install prisma --no-save &&
-             npx prisma generate &&
-             npx prisma migrate dev"  # Use migrate dev instead of deploy
-    environment:
-      DATABASE_URL: 'postgresql://${DB_USER:-backend}:${DB_PASSWORD:-password}@db:5432/${DB_NAME:-backend}'
-    depends_on:
-      db:
-        condition: service_healthy

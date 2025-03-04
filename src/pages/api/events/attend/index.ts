@@ -20,17 +20,17 @@ export default async function handler(
       return res.status(HttpStatus.BAD_REQUEST).end();
 
     // TODO : change user_name by current_user
-    const eventAttending = await prisma.eventAttending.findFirst({
+    const eventAttending = await prisma.event_attending.findFirst({
       where: { event_id: event.id, user_name: 'JOHNDOE' }, // eslint-disable-line
     });
 
     // TODO : change user_name by current_user
     if (eventAttending == null || eventAttending == undefined) {
-      await prisma.eventAttending.create({
+      await prisma.event_attending.create({
         data: { event_id: event.id, user_name: 'JOHNDOE', is_attending: true }, // eslint-disable-line
       });
     } else {
-      await prisma.eventAttending.update({
+      await prisma.event_attending.update({
         where: { id: eventAttending.id },
         data: { is_attending: !eventAttending.is_attending }, // eslint-disable-line
       });

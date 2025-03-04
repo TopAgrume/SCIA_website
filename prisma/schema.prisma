@@ -1,5 +1,3 @@
-// https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -9,64 +7,81 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Event {
-  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name String
-  about String
-  link String
-  by String
-  place String
-  start_date DateTime
-  end_date DateTime
-  created_by String // TODO : FOREIGN KEY ON USER
-  created_at DateTime @default(now())
-  updated_at DateTime @default(now()) @updatedAt
-  attending EventAttending[]
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model databasechangelog {
+  id            String   @db.VarChar(255)
+  author        String   @db.VarChar(255)
+  filename      String   @db.VarChar(255)
+  dateexecuted  DateTime @db.Timestamp(6)
+  orderexecuted Int
+  exectype      String   @db.VarChar(10)
+  md5sum        String?  @db.VarChar(35)
+  description   String?  @db.VarChar(255)
+  comments      String?  @db.VarChar(255)
+  tag           String?  @db.VarChar(255)
+  liquibase     String?  @db.VarChar(20)
+  contexts      String?  @db.VarChar(255)
+  labels        String?  @db.VarChar(255)
+  deployment_id String?  @db.VarChar(10)
 
-  @@map("event")
+  @@ignore
 }
 
-model Project {
-  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name String 
-  about String
-  link String
-  by String
-  created_by String // TODO : FOREIGN KEY ON USER
-  created_at DateTime @default(now())
-  updated_at DateTime @default(now()) @updatedAt
-
-  @@map("project")
+model databasechangeloglock {
+  id          Int       @id
+  locked      Boolean
+  lockgranted DateTime? @db.Timestamp(6)
+  lockedby    String?   @db.VarChar(255)
 }
 
-model Suggestion {
-  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name String
-  summary String
-  link String
-  type ArticleType
-  created_by String // TODO : FOREIGN KEY ON USER
-  created_at DateTime @default(now())
-  updated_at DateTime @default(now()) @updatedAt
-
-  @@map("suggestion")
+model event {
+  id              String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name            String
+  about           String
+  link            String
+  by              String
+  place           String
+  start_date      DateTime
+  end_date        DateTime
+  created_by      String
+  created_at      DateTime          @default(now())
+  updated_at      DateTime          @default(now())
+  event_attending event_attending[]
 }
 
-model EventAttending {
-  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  event Event @relation(fields: [event_id], references: [id])
-  event_id String @db.Uuid
-  user_name String
-  is_attending Boolean @default(true)
-  created_at DateTime @default(now())
-  updated_at DateTime @default(now()) @updatedAt
-
-  @@map("event_attending")
+model event_attending {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  event_id     String   @db.Uuid
+  user_name    String
+  is_attending Boolean  @default(true)
+  created_at   DateTime @default(now())
+  updated_at   DateTime @default(now())
+  event        event    @relation(fields: [event_id], references: [id])
 }
 
-enum ArticleType {
+model project {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name       String
+  about      String
+  link       String
+  by         String
+  created_by String
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+}
+
+model suggestion {
+  id         String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name       String
+  summary    String
+  link       String
+  type       article_type
+  created_by String
+  created_at DateTime     @default(now())
+  updated_at DateTime     @default(now())
+}
+
+enum article_type {
   ARTICLE
   VIDEO
-
-  @@map("article_type")
 }
