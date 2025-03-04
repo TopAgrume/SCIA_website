@@ -29,7 +29,7 @@ export default async function handler(
 
     const eventsMapped = await Promise.all(
       events.map(async event => {
-        const participants = await prisma.eventAttending.findMany({
+        const participants = await prisma.event_attending.findMany({
           where: { event_id: event.id }, // eslint-disable-line
         });
         const participantsOnlyNames = participants
@@ -38,7 +38,7 @@ export default async function handler(
               .map(participant => participant.user_name)
           : [];
 
-        const eventAttending = await prisma.eventAttending.findFirst({
+        const eventAttending = await prisma.event_attending.findFirst({
           where: { event_id: event.id, user_name: reqSender }, // eslint-disable-line
         });
 
