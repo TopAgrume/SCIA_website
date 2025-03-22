@@ -16,7 +16,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
-      - '5432:5432' # Exposed for development
+      - '5432:${DB_EXPOSED_PORT:-5432}'
     healthcheck:
       test:
         [

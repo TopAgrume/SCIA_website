@@ -47,8 +47,8 @@ export default function NavigationBar() {
           <NavItem
             icon={<Home className='w-4 h-4' />}
             label='Accueil'
-            href='/home'
-            isActive={pathname === '/home'}
+            href='/'
+            isActive={pathname === '/'}
           />
           <NavItem
             icon={<Calendar className='w-4 h-4' />}
