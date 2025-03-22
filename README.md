@@ -28,7 +28,7 @@ Also, have a look at docs of the tech stack.
 1. Clone the repository:
 
    ```console
-   foo@bar:~$ git clone https://github.com/TopAgrume/SCIA_website
+   foo@bar:~$ git clone git@github.com:TopAgrume/SCIA_website.git
    foo@bar:~$ cd SCIA_website
    ```
 
@@ -50,7 +50,7 @@ Also, have a look at docs of the tech stack.
    ```bash
    foo@bar:~$ npx prisma generate # generate a prisma client synced with /prisma/schema.prisma to use the prisma API in the backend.
    foo@bar:~$ make dbup
-   foo@bar:~$ npm run dev
+   foo@bar:~$ npm run dev # front on localhost:3000
    ```
 
    You can also use `make allup` if you want to dockerized the _Next.js_ app (don't do `npm run dev` in that case). Consider using `make dbup` for hot reload when working on front or backend.
