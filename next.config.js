@@ -4,6 +4,16 @@ const nextConfig = {
   experimental: {
     outputFileTracingRoot: undefined,
   },
-}
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'api.microlink.io',
+        port: '',
+        pathname: '/**',
+      },
+    ],
+  },
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
