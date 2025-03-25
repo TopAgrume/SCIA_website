@@ -54,19 +54,19 @@ export default function NavigationBar() {
             icon={<Calendar className='w-4 h-4' />}
             label='Evenements'
             href='/events'
-            isActive={pathname === '/events'}
+            isActive={pathname === '/events/'}
           />
           <NavItem
             icon={<Folder className='w-4 h-4' />}
             label='Projets'
             href='/projects'
-            isActive={pathname === '/projects'}
+            isActive={pathname === '/projects/'}
           />
           <NavItem
             icon={<Bell className='w-4 h-4' />}
             label='Suggestions'
             href='/suggestions'
-            isActive={pathname === '/suggestions'}
+            isActive={pathname === '/suggestions/'}
           />
         </nav>
         <div className='flex items-center space-x-4'>
