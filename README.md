@@ -66,15 +66,16 @@ Also, have a look at docs of the tech stack.
 Database migrations are handled by **Liquibase**, here is how to use it:
 
 - To add changes to the DB, add a file in _/db/changelogs/developpers_, starting with the date and what the file is about.
-- To add this file to the DB version, either add a line to the last changelog file in _/db/chqngelogs/versions_, or create a new changelog file (if so, **change** the **DB_VERSION** in your `.env` file, you can also set it in the `.env.example`). Have a look at `changelog_init.xml` to understand how to add new files and link changelogs.
+- To add this file to the DB version, either add a line to the last changelog file in _/db/changelogs/versions_, or create a new changelog file (if so, **change** the **DB_VERSION** in your `.env` file, you can also set it in the `.env.example`). Have a look at `changelog_init.xml` to understand how to add new files and link changelogs.
 - Don't modify existing `.sql` files in _/developpers_, add a new one to update old code.
+- When starting the *db* docker container with new changes, don't forget to run `npx prisma db pull` after the *db-migrator* ended to update the `schema.prisma` file, and also run `npx prisma generate`.
 
 ## Git
 
 - Try using meaningfull commit messages.
 - Commit format : `[{branch}] {feat/fix/tests}: {commit_message}`
 - It's cool to have PR.
-- Consider using **rebase** for sexy history (`merge` is also cool).
+- Consider using **rebase** for sexy history (`merge` is also good).
   ```bash
   foo@bar:~$ git branch
   > my_branch
