@@ -32,4 +32,12 @@ type Suggestion = {
   isAuthor: boolean; // same as for Event
 };
 
-export type { Event, Project, Suggestion };
+type User = {
+  username: string;
+  email: string;
+  password: string;
+  is_scia: boolean;
+  is_admin: boolean;
+};
+
+export type { Event, Project, Suggestion, User };
