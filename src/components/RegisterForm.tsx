@@ -6,21 +6,34 @@ import {
   ExclamationCircleIcon,
   UserIcon,
   EyeIcon,
-  EyeSlashIcon
+  EyeSlashIcon,
+  CheckCircleIcon
 } from '@heroicons/react/24/outline';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import PrimaryButton from '@/components/buttons/PrimaryButton';
 import { useFormState } from 'react-dom';
 import { register } from '@/lib/actions';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
 
-const initialState = { errorMessage: '' };
+const initialState = { errorMessage: '', successMessage: '' };
 
 export default function RegisterForm() {
   const [formState, formAction] = useFormState(register, initialState);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (formState.successMessage) {
+      const timer = setTimeout(() => {
+        router.push('/login');
+      }, 2000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [formState.successMessage, router]);
 
   return (
     <form action={formAction} className='space-y-3'>
@@ -30,16 +43,16 @@ export default function RegisterForm() {
           <div>
             <label
               className='mb-3 mt-5 block text-xs font-medium text-gray-900'
-              htmlFor='name'
+              htmlFor='username'
             >
               Username
             </label>
             <div className='relative'>
               <input
                 className='peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500'
-                id='name'
+                id='username'
                 type='text'
-                name='name'
+                name='username'
                 placeholder='Enter your username'
                 required
               />
@@ -138,7 +151,7 @@ export default function RegisterForm() {
           <p className='text-sm text-gray-500'>Already have an account? <Link href="/login" className='text-blue-500 hover:underline'>Login</Link></p>
         </div>
         <div
-          className='flex h-8 items-end space-x-1'
+          className='flex h-8 items-center space-x-1'
           aria-live='polite'
           aria-atomic='true'
         >
@@ -147,6 +160,12 @@ export default function RegisterForm() {
               <ExclamationCircleIcon className='h-5 w-5 text-red-500' />
               <p className='text-sm text-red-500'>{formState.errorMessage}</p>
             </>
+          )}
+          {formState.successMessage && (
+            <div className='flex items-center space-x-1'>
+              <CheckCircleIcon className='h-5 w-5 text-green-500' />
+              <p className='text-sm text-green-500'>{formState.successMessage}</p>
+            </div>
           )}
         </div>
       </div>

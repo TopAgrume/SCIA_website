@@ -33,11 +33,14 @@ type Suggestion = {
 };
 
 type User = {
+  id: string;
   username: string;
   email: string;
   password: string;
+  role: 'VISITOR' | 'STUDENT' | 'ADMIN';
   is_scia: boolean;
-  is_admin: boolean;
+  created_at: Date;
+  updated_at: Date;
 };
 
 export type { Event, Project, Suggestion, User };

@@ -85,3 +85,21 @@ enum article_type {
   ARTICLE
   VIDEO
 }
+
+enum role {
+  VISITOR
+  STUDENT
+  ADMIN
+}
+
+model users {
+  @@map("user")
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  username   String   @unique
+  email      String   @unique
+  password   String
+  role       role     @default(VISITOR)
+  is_scia    Boolean  @default(false)
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+}
