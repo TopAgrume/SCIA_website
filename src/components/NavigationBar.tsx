@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { useDarkMode } from '@/providers/DarkModeProvider';
+import { useSession } from 'next-auth/react';
 
 function NavItem({
   icon,
@@ -20,11 +21,10 @@ function NavItem({
   return (
     <Link
       href={href}
-      className={`flex items-center space-x-2 px-3 py-2 rounded-md transition ${
-        isActive
-          ? 'bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-gray-200'
-          : 'hover:bg-gray-300 dark:hover:bg-gray-600'
-      }`}
+      className={`flex items-center space-x-2 px-3 py-2 rounded-md transition ${isActive
+        ? 'bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-gray-200'
+        : 'hover:bg-gray-300 dark:hover:bg-gray-600'
+        }`}
     >
       {icon}
       <span>{label}</span>
@@ -35,6 +35,7 @@ function NavItem({
 export default function NavigationBar() {
   const pathname = usePathname();
   const { isDarkMode, toggleDarkMode } = useDarkMode();
+  const { data: session, status } = useSession();
 
   return (
     <header className='top-0 z-50 sticky bg-gray-200 dark:bg-gray-700 shadow'>
@@ -75,15 +76,33 @@ export default function NavigationBar() {
             className='bg-gray-300 dark:bg-gray-600 p-2 rounded-full'
             aria-label='Toggle dark mode'
           >
-            {isDarkMode ? (
-              <Sun className='w-5 h-5' />
-            ) : (
-              <Moon className='w-5 h-5' />
-            )}
+            {isDarkMode ? <Sun className='w-5 h-5' /> : <Moon className='w-5 h-5' />}
           </button>
+
           <div className='flex items-center space-x-2'>
-            <User className='w-5 h-5' />
-            <span className='md:inline hidden'>mael.reynaud</span>
+            {status === 'loading' && (
+              <div className='h-6 w-24 bg-gray-300 dark:bg-gray-600 rounded-md animate-pulse'></div>
+            )}
+
+            {status === 'authenticated' && (
+              <Link href="/dashboard" className="flex items-center space-x-2">
+                <User className='w-5 h-5' />
+                <span className='md:inline hidden font-medium'>
+                  {session.user.email}
+                </span>
+              </Link>
+            )}
+
+            {status === 'unauthenticated' && (
+              <div className="flex items-center space-x-3">
+                <Link href="/login" className="flex items-center space-x-2 font-medium hover:text-blue-600">
+                  <span>Login</span>
+                </Link>
+                <Link href="/register" className="font-medium hover:text-blue-600">
+                  <span>Register</span>
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -1,11 +1,10 @@
-'use client';
-
 import NavigationBar from '@/components/NavigationBar';
 import './globals.css';
 // eslint-disable-next-line camelcase
 import { JetBrains_Mono } from 'next/font/google';
 import QueryProvider from '@/providers/QueryProvider';
 import { DarkModeProvider } from '@/providers/DarkModeProvider';
+import NextAuthProvider from '@/providers/NextAuthProvider';
 
 const jetbrainsMono = JetBrains_Mono({
   weight: ['400', '700', '800'],
@@ -23,12 +22,14 @@ export default function RootLayout({
         className={`${jetbrainsMono.className} antialiased bg-gray-50 dark:bg-gray-800`}
       >
         <script>0</script>
-        <DarkModeProvider>
-          <QueryProvider>
-            <NavigationBar />
-            {children}
-          </QueryProvider>
-        </DarkModeProvider>
+        <NextAuthProvider>
+          <DarkModeProvider>
+            <QueryProvider>
+              <NavigationBar />
+              {children}
+            </QueryProvider>
+          </DarkModeProvider>
+        </NextAuthProvider>
       </body>
     </html>
   );
