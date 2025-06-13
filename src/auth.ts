@@ -8,7 +8,7 @@ import bcrypt from 'bcryptjs';
 
 async function getUser(email: string): Promise<User | undefined> {
   try {
-    const user = await prisma.project.findUnique({});
+    const user = await prisma.users.findUnique({where: { email }});
 
     return user;
   } catch (error) {
