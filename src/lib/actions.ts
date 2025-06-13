@@ -1,6 +1,6 @@
 'use server';
 
-import { signIn } from '@/auth';
+import { signIn, signOut } from '@/auth';
 import { AuthError } from 'next-auth';
 import { prisma } from './prisma';
 import { z } from 'zod';
@@ -89,4 +89,10 @@ export async function register(
     console.error('Registration error:', error);
     return { errorMessage: 'Something went wrong during registration.', successMessage: '' };
   }
+}
+
+export async function logout() {
+  await signOut({
+    redirectTo: '/login',
+  });
 }
